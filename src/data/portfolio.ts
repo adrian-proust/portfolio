@@ -93,6 +93,7 @@ const presentation = (title: string, id: string, delay: number, start = false): 
 export const projects: Project[] = [
   {
     id: 'wonky-diver',
+    presentationsAfterContext: true,
     trailer: {
       title: 'Wonky Diver — Trailer',
       featured: true,
@@ -128,7 +129,7 @@ export const projects: Project[] = [
           {
             title: 'Structuring a persuasive pitch deck',
             paragraphs: [
-              'Once the demo reached the polishing stage, I took responsibility for writing and organizing the pitch deck.',
+              'Once the demo reached the polishing stage, I had for role to write and organise the content of the pitch deck.',
             ],
           },
         ],
@@ -157,6 +158,7 @@ export const projects: Project[] = [
             title: 'An independent studio making the most of its flexibility',
             paragraphs: [
               'Working in a studio that relied less on extensive design documentation and more on flexible processes and rapid iteration was especially enriching. However, this approach also meant there were fewer established procedures to draw on, and I would sometimes have welcomed more structure to help organize my work within the company.',
+              "I'm really looking forward to work under an experienced game design mentor in the future.",
             ],
           },
         ],

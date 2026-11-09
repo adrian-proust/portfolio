@@ -19,6 +19,9 @@ export default function ProjectDetail({ project, onBack }: Props) {
   const imageSrc = mediaSrc(project.image);
   const featuredVideo = project.links?.find((link) => link.featuredVideo);
   const featuredTrailer = project.trailer?.featured ? project.trailer : null;
+  const presentations = project.presentations?.map((presentation) => (
+    <PresentationViewer key={presentation.embedUrl} presentation={presentation} />
+  ));
   const mediaGroups = [
     { title: 'Videos', items: project.media?.filter((item) => item.type === 'video') ?? [] },
     { title: 'Photo Gallery', items: project.media?.filter((item) => item.type === 'image') ?? [] },
@@ -79,6 +82,7 @@ export default function ProjectDetail({ project, onBack }: Props) {
               </div>
             </div>
           )}
+          {project.presentationsAfterContext && presentations}
           {project.longDescription && project.longDescription.length > 0 && (
             <div className="project-detail__section">
               <h2 className="display-sm project-detail__section-title">Overview & Concept</h2>
@@ -118,9 +122,7 @@ export default function ProjectDetail({ project, onBack }: Props) {
             </div>
           ))}
 
-          {project.presentations?.map((presentation) => (
-            <PresentationViewer key={presentation.embedUrl} presentation={presentation} />
-          ))}
+          {!project.presentationsAfterContext && presentations}
 
           {project.trailer && !featuredTrailer && (
             <div className="project-detail__section">
