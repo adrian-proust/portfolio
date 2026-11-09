@@ -136,6 +136,22 @@
   margin: 0;
 }
 
+.project-detail__narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-detail__narrative + .project-detail__narrative {
+  margin-top: 0.75rem;
+}
+
+.project-detail__narrative h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
 .project-detail__highlights {
   list-style: none;
   padding: 0;

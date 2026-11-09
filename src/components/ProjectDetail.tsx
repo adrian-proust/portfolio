@@ -104,6 +104,20 @@ export default function ProjectDetail({ project, onBack }: Props) {
             </div>
           )}
 
+          {project.sections?.map((section) => (
+            <div className="project-detail__section" key={section.title}>
+              <h2 className="display-sm project-detail__section-title">{section.title}</h2>
+              <div className="project-detail__paragraphs">
+                {section.items.map((item) => (
+                  <div className="project-detail__narrative" key={item.title}>
+                    <h3>{item.title}</h3>
+                    {item.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
           {project.presentations?.map((presentation) => (
             <PresentationViewer key={presentation.embedUrl} presentation={presentation} />
           ))}

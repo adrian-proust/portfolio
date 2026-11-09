@@ -107,7 +107,61 @@ export const projects: Project[] = [
     description: 'Explore a hostile alien ocean as a barely qualified diver. Study strange creatures, gather resources, and upgrade your gear to reach deeper biomes and uncover new paths.',
     image: '/projects/wonky-diver-cover.png',
     imageAlt: 'Wonky Diver cover art with a diver and underwater creatures',
-    longDescription: ['Overview and concept details coming soon.'],
+    context: 'I joined during pre-production. The game already had a well-developed visual identity, but its overall gameplay direction was still taking shape. A demo was in development, and the studio’s main priority was to finish it and its pitch deck as quickly as possible to secure a publisher.',
+    sections: [
+      {
+        title: 'My Responsibilities',
+        items: [
+          {
+            title: 'Given responsibility early on',
+            paragraphs: [
+              'My first task was to give the demo’s gameplay a clear structure, taking specific constraints and the target audience into account. I developed a range of challenges and gameplay elements to create a concise demo that showcased the project’s identity and potential.',
+              'With little time for detailed design documentation, a shared board brought together all the demo’s information and concept work. Gameplay elements were implemented quickly, then revised based on playtest feedback and my guidance.',
+            ],
+          },
+          {
+            title: 'Refining gameplay through iteration',
+            paragraphs: [
+              'As production progressed, I worked on improving game feel by tuning a wide range of parameters in Unreal Engine, including controller settings, character, camera and controls (3Cs), and the balance of resources and abilities. At the same time, I helped ensure our design intentions carried through into the game, collaborating with artists to improve how clearly gameplay elements communicated their purpose and possible interactions.',
+            ],
+          },
+          {
+            title: 'Structuring a persuasive pitch deck',
+            paragraphs: [
+              'Once the demo reached the polishing stage, I took responsibility for writing and organizing the pitch deck.',
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Outcome',
+        items: [
+          {
+            title: 'A project that caught publishers’ attention',
+            paragraphs: [
+              'I am very happy with the outcome of my contribution to this project. Our efforts helped us stand out among the strongest projects at Paris Game Biz 2026. Publisher feedback was very positive, and some publishers opened discussions about a potential collaboration.',
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Personal Reflections',
+        items: [
+          {
+            title: 'Trusted from the start',
+            paragraphs: [
+              'I am extremely grateful for the responsibility I was given as an intern. Playing an active role in DPG’s development was an invaluable opportunity that is rare in an internship. From the beginning, I was asked to help define crucial elements of the project. Later, my input and feedback helped inform task delegation and changes in production direction. I particularly appreciated the flatter hierarchy of an independent studio.',
+            ],
+          },
+          {
+            title: 'An independent studio making the most of its flexibility',
+            paragraphs: [
+              'Working in a studio that relied less on extensive design documentation and more on flexible processes and rapid iteration was especially enriching. However, this approach also meant there were fewer established procedures to draw on, and I would sometimes have welcomed more structure to help organize my work within the company.',
+            ],
+          },
+        ],
+      },
+    ],
     presentations: [{
       title: 'Wonky Diver — Presentation',
       embedUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vQ7TDfKztYvEkjcPnLeEDDGmlMf1bMgQWr2W4C-slwFu43ivx7oJQvocVCxSSfqD2H0n9_cqtK69CpV/embed?start=true&loop=false&delayms=5000',
@@ -124,7 +178,7 @@ export const projects: Project[] = [
     },
     title: 'Wonky Race',
     duration: '2026',
-    role: 'Details coming soon',
+    role: 'Game designer',
     tags: ['Unreal Engine', 'Demo', 'Party Game', 'Racing', 'Physics-Based Combat', 'Arena Battles'],
     category: 'Professional',
     description: 'A chaotic multiplayer brawl-racer for up to six players. Race through dangerous courses, slap and grab your rivals, then battle in arenas where each round brings a new challenge.',
