@@ -59,7 +59,16 @@ export default function ProjectDetail({ project, onBack }: Props) {
 
         <div className={`project-detail__media-wrapper${featuredVideo || featuredTrailer ? ' project-detail__media-wrapper--video' : ''}`}>
           {featuredTrailer ? (
-            <video controls playsInline preload="none" poster={mediaSrc(featuredTrailer.poster)} aria-label={featuredTrailer.title}>
+            <video
+              key={featuredTrailer.src}
+              controls
+              playsInline
+              autoPlay={featuredTrailer.autoplayMuted}
+              muted={featuredTrailer.autoplayMuted}
+              preload={featuredTrailer.autoplayMuted ? 'auto' : 'none'}
+              poster={mediaSrc(featuredTrailer.poster)}
+              aria-label={featuredTrailer.title}
+            >
               <source src={mediaSrc(featuredTrailer.src)} type="video/mp4" />
               <a href={mediaSrc(featuredTrailer.src)}>Download the trailer</a>
             </video>

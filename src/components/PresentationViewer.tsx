@@ -5,6 +5,9 @@ export default function PresentationViewer({ presentation }: { presentation: Pre
   return (
     <div className="project-detail__section">
       <h2 className="display-sm project-detail__section-title">{presentation.title}</h2>
+      {presentation.description && (
+        <p className="presentation-viewer__description">{presentation.description}</p>
+      )}
       <div className="presentation-viewer">
         <iframe
           className="project-detail__slides"

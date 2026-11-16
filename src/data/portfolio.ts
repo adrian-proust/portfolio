@@ -158,7 +158,6 @@ export const projects: Project[] = [
             title: 'An independent studio making the most of its flexibility',
             paragraphs: [
               'Working in a studio that relied less on extensive design documentation and more on flexible processes and rapid iteration was especially enriching. However, this approach also meant there were fewer established procedures to draw on, and I would sometimes have welcomed more structure to help organize my work within the company.',
-              "I'm really looking forward to work under an experienced game design mentor in the future.",
             ],
           },
         ],
@@ -166,6 +165,7 @@ export const projects: Project[] = [
     ],
     presentations: [{
       title: 'Wonky Diver — Presentation',
+      description: 'This presentation is an excerpt from the project’s pitch deck. It showcases the game’s content and provides a visual overview of the different systems I designed and improved.',
       embedUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vQ7TDfKztYvEkjcPnLeEDDGmlMf1bMgQWr2W4C-slwFu43ivx7oJQvocVCxSSfqD2H0n9_cqtK69CpV/embed?start=true&loop=false&delayms=5000',
       url: 'https://docs.google.com/presentation/d/e/2PACX-1vQ7TDfKztYvEkjcPnLeEDDGmlMf1bMgQWr2W4C-slwFu43ivx7oJQvocVCxSSfqD2H0n9_cqtK69CpV/pub?start=true&loop=false&delayms=5000',
     }],
@@ -174,6 +174,7 @@ export const projects: Project[] = [
     id: 'wonky-race',
     trailer: {
       title: 'Wonky Race — Trailer',
+      autoplayMuted: true,
       featured: true,
       src: '/projects/wonky-race-trailer.mp4',
       poster: '/projects/wonky-race-cover.png',
@@ -189,6 +190,7 @@ export const projects: Project[] = [
     longDescription: ['Overview and concept details coming soon.'],
     presentations: [{
       title: 'Wonky Race — Presentation',
+      description: 'This presentation is an excerpt from the project’s pitch deck. It showcases the game’s content and provides a visual overview of the different systems I designed and improved.',
       embedUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vR4fqyu8BtkOLmmyZ2TNvTWTWg4xIUxA8cUdZE-I7a_SbOcJNc9dVa6UrtDvzcoII9AP-4LZILhzfdr/embed?start=true&loop=false&delayms=5000',
       url: 'https://docs.google.com/presentation/d/e/2PACX-1vR4fqyu8BtkOLmmyZ2TNvTWTWg4xIUxA8cUdZE-I7a_SbOcJNc9dVa6UrtDvzcoII9AP-4LZILhzfdr/pub?start=true&loop=false&delayms=5000',
     }],
