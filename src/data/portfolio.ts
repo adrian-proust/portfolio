@@ -96,6 +96,7 @@ export const projects: Project[] = [
     presentationsAfterContext: true,
     trailer: {
       title: 'Wonky Diver — Trailer',
+      autoplayMuted: true,
       featured: true,
       src: '/projects/wonky-diver-trailer.mp4',
       poster: '/projects/wonky-diver-cover.png',
@@ -172,6 +173,7 @@ export const projects: Project[] = [
   },
   {
     id: 'wonky-race',
+    presentationsAfterContext: true,
     trailer: {
       title: 'Wonky Race — Trailer',
       autoplayMuted: true,
@@ -187,7 +189,60 @@ export const projects: Project[] = [
     description: 'A chaotic multiplayer brawl-racer for up to six players. Race through dangerous courses, slap and grab your rivals, then battle in arenas where each round brings a new challenge.',
     image: '/projects/wonky-race-cover.png',
     imageAlt: 'Wonky Race cover art with colorful racers on a tropical track',
-    longDescription: ['Overview and concept details coming soon.'],
+    context: 'This project was further along than Wonky Diver. It already had a demo that had been presented to publishers, but feedback was mixed due to server costs and the planned live-service battle royale format. The project needed a new gameplay direction that preserved as much of its visual identity as possible.',
+    sections: [
+      {
+        title: 'My Responsibilities',
+        items: [
+          {
+            title: 'Setting a new gameplay direction',
+            paragraphs: [
+              'I proposed a new gameplay concept with a smaller scope, taking into account publisher feedback and the previous version of the project. The new direction leaned more toward a party game, combining arena combat with racing. The team approved the concept, marking the start of a new phase for the project.',
+            ],
+          },
+          {
+            title: 'From combat design to the pitch deck',
+            paragraphs: [
+              'I designed a combat system and a player controller that supported two distinct modes of movement. As with Wonky Diver, I was responsible for testing and tuning these systems throughout production to improve game feel and balance. Once playtesting confirmed that the gameplay worked as intended, I updated the pitch deck to reflect the new vision.',
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Outcomes',
+        items: [
+          {
+            title: 'Playtests reinforced the new direction',
+            paragraphs: [
+              'Playtest feedback was very positive after the gameplay pivot. The project’s next steps are now taking shape around this new direction.',
+            ],
+          },
+          {
+            title: 'New design pillars to guide production',
+            paragraphs: [
+              'I felt fortunate to propose a complete combat system and help oversee its implementation. I was responsible for defining new gameplay pillars to guide the rest of production.',
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Personal Reflections',
+        items: [
+          {
+            title: 'Constraints pushed me to get creative',
+            paragraphs: [
+              'I found it fascinating to design and implement new gameplay within these constraints. The smaller scope pushed me to rethink the classic kart racing experience by bringing in arena combat while keeping the design within the project’s scope.',
+            ],
+          },
+          {
+            title: 'Hands-on involvement in production',
+            paragraphs: [
+              'I felt closely involved in production despite my short time on the project. I enjoyed seeing my ideas through from concept to playtesting and refining them as they took shape in the game.',
+            ],
+          },
+        ],
+      },
+    ],
     presentations: [{
       title: 'Wonky Race — Presentation',
       description: 'This presentation is an excerpt from the project’s pitch deck. It showcases the game’s content and provides a visual overview of the different systems I designed and improved.',
