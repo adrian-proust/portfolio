@@ -173,7 +173,19 @@ export default function ProjectDetail({ project, onBack }: Props) {
                 {group.items.map((item) => (
                   <figure key={item.src}>
                     {item.type === 'video' ? (
-                      <video controls playsInline preload="none" poster={item.poster && mediaSrc(item.poster)} aria-label={item.alt}>
+                      <video
+                        controls
+                        playsInline
+                        preload="none"
+                        muted={item.permanentlyMuted}
+                        onVolumeChange={item.permanentlyMuted ? (event) => {
+                          const video = event.currentTarget;
+                          if (!video.muted) video.muted = true;
+                          if (video.volume !== 0) video.volume = 0;
+                        } : undefined}
+                        poster={item.poster && mediaSrc(item.poster)}
+                        aria-label={item.alt}
+                      >
                         <source src={mediaSrc(item.src)} type="video/mp4" />
                         <a href={mediaSrc(item.src)}>Watch the video</a>
                       </video>

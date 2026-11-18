@@ -24,7 +24,7 @@ export type Project = {
   credits?: string;
   links?: { label: string; url: string; featuredVideo?: boolean }[];
   showResources?: boolean;
-  media?: { type: 'image' | 'video'; src: string; alt: string; caption?: string; poster?: string }[];
+  media?: { type: 'image' | 'video'; src: string; alt: string; caption?: string; poster?: string; permanentlyMuted?: boolean }[];
   linkUrl?: string;
   linkLabel?: string;
 };

@@ -822,6 +822,7 @@ export const projects: Project[] = [
       {
         "type": "video",
         "src": "https://video.wixstatic.com/video/4ecbbb_2bf6264721144cc988f5ed3fe8c5bb18/720p/mp4/file.mp4",
+        permanentlyMuted: true,
         "alt": "geogebra-short-film original film or demonstration"
       }
     ], title: 'GeoGebra Short Film', duration: '2014',
