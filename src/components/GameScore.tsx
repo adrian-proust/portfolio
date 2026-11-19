@@ -1,3 +1,4 @@
+import { useHighScore } from '../hooks/useHighScore';
 import './GameScore.css';
 
 const digitSegments = ['abcdef', 'bc', 'abdeg', 'abcdg', 'bcfg', 'acdfg', 'acdefg', 'abc', 'abcdefg', 'abcdfg'];
@@ -11,12 +12,10 @@ const segments = [
   ['g', '8,34 32,34 36,38 32,42 8,42 4,38'],
 ] as const;
 
-export default function GameScore({ score, showPickup = true }: { score: number; showPickup?: boolean }) {
+export default function GameScore({ score, game }: { score: number; game: 'ball' | 'selected-work' }) {
+  const highScore = useHighScore(score, game);
   return (
-    <output className="game-score" aria-label={`Game score: ${score}`} aria-live="polite" aria-atomic="true">
-      <span className="game-score__label mono" aria-hidden="true">
-        {showPickup && <><span className="game-score__pickup" /> = </>}Score
-      </span>
+    <output className="game-score" aria-label={`Score: ${score}. High score: ${highScore}`} aria-live="polite" aria-atomic="true">
       <span className="game-score__digits" key={score} aria-hidden="true">
         {String(score).padStart(3, '0').split('').map((digit, i) => (
           <svg viewBox="0 0 42 76" key={i} className="game-score__digit">
@@ -25,6 +24,9 @@ export default function GameScore({ score, showPickup = true }: { score: number;
             ))}
           </svg>
         ))}
+      </span>
+      <span className="game-score__label mono" aria-hidden="true">
+        High score = <strong>{String(highScore).padStart(3, '0')}</strong>
       </span>
     </output>
   );

@@ -106,6 +106,14 @@ button {
   padding-bottom: clamp(4rem, 10vw, 8rem);
 }
 
+.title-dot {
+  display: inline-block;
+  width: 0.16em;
+  height: 0.16em;
+  margin-left: 0.12em;
+  background: var(--accent);
+}
+
 .label {
   font-family: var(--font-mono);
   font-size: 0.75rem;

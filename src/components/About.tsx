@@ -14,7 +14,7 @@ export default function About() {
         <div className="about about-panel">
           <SectionLabel index="01" label="About" />
           <div className="about__body">
-            <h2 className="about__lead reveal">{about.lead}</h2>
+            <h2 className="about__lead reveal">{about.lead}<span className="title-dot" aria-hidden="true" /></h2>
             {about.paragraphs.map((paragraph) => (
               <p className="about__text reveal" key={paragraph.slice(0, 24)}>
                 {paragraph}

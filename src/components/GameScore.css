@@ -14,13 +14,10 @@
   text-transform: uppercase;
 }
 
-.game-score__pickup {
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--accent);
-  border-radius: 50%;
-  background: var(--bg);
-  box-shadow: 0 0 7px rgba(255, 90, 31, 0.22);
+.game-score__label strong {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
 }
 
 .game-score__digits {

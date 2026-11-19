@@ -1,3 +1,14 @@
+.projects--mouse-play {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.projects--mouse-play .project-card,
+.projects--mouse-play .project-card * {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 .projects__header {
   display: flex;
   flex-wrap: wrap;

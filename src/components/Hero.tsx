@@ -24,13 +24,6 @@ export default function Hero({ onSelectProject }: Props) {
     <section id="Home" className="section hero-section">
       {enabled && <div className="home-game-effects" ref={effectsRef} aria-hidden="true" />}
       <div className="container recent">
-        <div className="recent__meta mono">
-          <span>Portfolio — {new Date().getFullYear()}</span>
-          <span className="hero__status">
-            <span className="hero__pulse" /> {profile.availability}
-          </span>
-        </div>
-
         <div className="recent__header reveal">
           <div className="recent__title-block">
             <h1 className="hero__title">
@@ -45,13 +38,13 @@ export default function Hero({ onSelectProject }: Props) {
               </span>
             </p>
           </div>
-          {enabled && <GameScore score={score} />}
+          {enabled && <GameScore score={score} game="ball" />}
         </div>
       </div>
       <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore}>
         <div className="container recent__group">
           <div className="recent__group-header reveal">
-            <h2 className="display-md">{homeProjects.title}</h2>
+            <h2 className="display-md">{homeProjects.title}<span className="title-dot" aria-hidden="true" /></h2>
           </div>
           <div className="project-grid">
             {latestProjects.map((project, i) => (

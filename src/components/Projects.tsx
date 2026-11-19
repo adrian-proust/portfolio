@@ -24,22 +24,23 @@ export default function Projects({ onSelectProject }: Props) {
   useReveal([filter]);
 
   return (
-    <section id="Projects" className="section">
+    <section
+      id="Projects"
+      className={`section${miniGamesEnabled ? ' projects--mouse-play' : ''}`}
+      onPointerDown={(event) => {
+        if (!miniGamesEnabled || event.pointerType !== 'mouse' || event.button !== 0) return;
+        const target = event.target as Element;
+        if (!target.closest('.project-card, a, button, [role="button"]')) event.preventDefault();
+      }}
+    >
       <MarqueeBanner text="Projects" />
-      <div
-        className="container projects__playground"
-        onPointerDown={(event) => {
-          if (!miniGamesEnabled || event.pointerType !== 'mouse' || event.button !== 0) return;
-          const target = event.target as Element;
-          if (!target.closest('.project-card, a, button, [role="button"]')) event.preventDefault();
-        }}
-      >
+      <div className="container projects__playground">
         <div className="projects__header reveal">
           <h2 className="display-lg">
             Selected <br />
             work<span className="accent">.</span>
           </h2>
-          {miniGamesEnabled && <GameScore score={0} showPickup={false} />}
+          {miniGamesEnabled && <GameScore score={0} game="selected-work" />}
         </div>
 
         <div className="filters reveal" role="group" aria-label="Filter projects by category">
