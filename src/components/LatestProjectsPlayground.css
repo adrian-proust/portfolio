@@ -21,6 +21,7 @@
   width: 18px;
   height: 18px;
   background: #0d0d0c;
+  border-radius: 50%;
   border: 1px solid var(--accent);
   box-shadow: 0 0 7px rgba(255, 90, 31, 0.22);
 }
@@ -120,4 +121,42 @@
   border-radius: 50%;
   background: var(--accent);
   pointer-events: none;
+}
+
+.game-jump-hint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: #fff;
+  pointer-events: none;
+  animation: jump-hint-shimmer 1.6s ease-in-out infinite;
+}
+
+.game-jump-ripple {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: jump-ripple 0.45s ease-out forwards;
+}
+
+@keyframes jump-hint-shimmer {
+  0%, 100% { color: #929292; text-shadow: none; }
+  50% { color: #fff; text-shadow: 0 0 5px rgba(255, 255, 255, 0.35); }
+}
+
+@keyframes jump-ripple {
+  from { transform: translate(-50%, -50%) scale(0.4); opacity: 0.8; }
+  to { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-jump-hint { animation: none; }
+  .game-jump-ripple { animation: none; transform: translate(-50%, -50%); }
 }

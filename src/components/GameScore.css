@@ -6,9 +6,21 @@
 }
 
 .game-score__label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+}
+
+.game-score__pickup {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: 0 0 7px rgba(255, 90, 31, 0.22);
 }
 
 .game-score__digits {

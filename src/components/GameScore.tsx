@@ -14,7 +14,9 @@ const segments = [
 export default function GameScore({ score }: { score: number }) {
   return (
     <output className="game-score" aria-label={`Game score: ${score}`} aria-live="polite" aria-atomic="true">
-      <span className="game-score__label mono" aria-hidden="true">Score</span>
+      <span className="game-score__label mono" aria-hidden="true">
+        <span className="game-score__pickup" /> = Score
+      </span>
       <span className="game-score__digits" key={score} aria-hidden="true">
         {String(score).padStart(3, '0').split('').map((digit, i) => (
           <svg viewBox="0 0 42 76" key={i} className="game-score__digit">

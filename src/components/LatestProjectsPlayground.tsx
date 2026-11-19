@@ -1,9 +1,10 @@
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { ballTouchesSpike, ballTouchesSquare, layoutBottomWithin, spikeLimit } from '../lib/ballGame';
+import { ballTouchesCircle, ballTouchesSpike, layoutBottomWithin, nextSpikeSpeed, spikeLimit } from '../lib/ballGame';
 import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
-const SQUARE_SIZE = 18;
+const PICKUP_SIZE = 18;
+const TUTORIAL_STORAGE_KEY = 'portfolio.ball.jumpCount';
 const SPIKE_WIDTH = 18;
 const SPIKE_HEIGHT = 20;
 
@@ -23,6 +24,8 @@ type Props = {
 export default function LatestProjectsPlayground({ children, enabled, effectsRef, score, onCollect, onLose }: Props) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
+  const hintRef = useRef<HTMLSpanElement>(null);
+  const tutorialJumpsRef = useRef(0);
   const jumpRef = useRef<() => void>(() => {});
   const scoreRef = useRef(score);
   useEffect(() => { scoreRef.current = score; }, [score]);
@@ -30,10 +33,15 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
   useEffect(() => {
     const area = areaRef.current;
     const ball = ballRef.current;
+    const hint = hintRef.current;
     const effects = effectsRef.current;
     const home = area?.closest<HTMLElement>('#Home');
     const foreground = ball?.parentElement;
-    if (!enabled || !area || !ball || !effects || !home || !foreground) return;
+    if (!enabled || !area || !ball || !hint || !effects || !home || !foreground) return;
+    try {
+      const stored = Number(window.localStorage.getItem(TUTORIAL_STORAGE_KEY));
+      if (Number.isFinite(stored)) tutorialJumpsRef.current = Math.max(tutorialJumpsRef.current, Math.min(5, Math.max(0, Math.floor(stored))));
+    } catch { /* The tutorial still works for this visit when storage is unavailable. */ }
 
     let width = area.clientWidth;
     let height = area.clientHeight;
@@ -58,6 +66,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     const pops: Pop[] = [];
     const spikes: Spike[] = [];
     const particles: Particle[] = [];
+    const clickRipples: Pop[] = [];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     // Reserve room for the slight horizontal stretch at the edges.
     const clampX = (value: number) => Math.max(RADIUS * 1.16, Math.min(width - RADIUS * 1.16, value));
@@ -114,9 +123,9 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
         effects.append(element);
         pickups.push({
           element,
-          x: SQUARE_SIZE + Math.random() * Math.max(0, width - SQUARE_SIZE * 2),
+          x: PICKUP_SIZE + Math.random() * Math.max(0, width - PICKUP_SIZE * 2),
           // Start at the top of the visible screen, even after scrolling.
-          altitude: Math.max(0, area.getBoundingClientRect().bottom) + SQUARE_SIZE,
+          altitude: Math.max(0, area.getBoundingClientRect().bottom) + PICKUP_SIZE,
           speed: 80,
           landed: null,
         });
@@ -133,13 +142,13 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           }
         } else pickup.landed += dt;
 
-        pickup.element.style.transform = `translate3d(${pickup.x - SQUARE_SIZE / 2}px, ${homeHeight - SQUARE_SIZE - pickup.altitude}px, 0)`;
-        if (respawnLeft === 0 && ballTouchesSquare(x, altitude + RADIUS * scaleY, RADIUS * scaleX, RADIUS * scaleY,
-          pickup.x, pickup.altitude + SQUARE_SIZE / 2, SQUARE_SIZE)) {
+        pickup.element.style.transform = `translate3d(${pickup.x - PICKUP_SIZE / 2}px, ${homeHeight - PICKUP_SIZE - pickup.altitude}px, 0)`;
+        if (respawnLeft === 0 && ballTouchesCircle(x, altitude + RADIUS * scaleY, RADIUS * scaleX, RADIUS * scaleY,
+          pickup.x, pickup.altitude + PICKUP_SIZE / 2, PICKUP_SIZE / 2)) {
           const ring = document.createElement('span');
           ring.className = 'game-pickup-pop';
           ring.style.left = `${pickup.x}px`;
-          ring.style.top = `${homeHeight - pickup.altitude - SQUARE_SIZE / 2}px`;
+          ring.style.top = `${homeHeight - pickup.altitude - PICKUP_SIZE / 2}px`;
           effects.append(ring);
           pops.push({ element: ring, age: 0 });
           pickup.element.remove();
@@ -158,6 +167,13 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           pops.splice(i, 1);
         }
       }
+      for (let i = clickRipples.length - 1; i >= 0; i--) {
+        clickRipples[i].age += dt;
+        if (clickRipples[i].age >= 0.45) {
+          clickRipples[i].element.remove();
+          clickRipples.splice(i, 1);
+        }
+      }
       const limit = spikeLimit(scoreRef.current);
       if (respawnLeft === 0 && limit > 0) {
         untilSpike -= dt;
@@ -167,10 +183,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           element.setAttribute('aria-hidden', 'true');
           foreground.append(element);
           const previousSpeed = spikes.at(-1)?.speed ?? 160;
-          const sampledSpeed = 100 + Math.random() * 140;
-          const speed = Math.abs(sampledSpeed - previousSpeed) < 25
-            ? (sampledSpeed < 170 ? sampledSpeed + 45 : sampledSpeed - 45)
-            : sampledSpeed;
+          const speed = nextSpikeSpeed(previousSpeed);
           spikes.push({ element, x: width + SPIKE_WIDTH / 2, speed });
           untilSpike = 2.2 + Math.random() * 1.2;
         }
@@ -197,6 +210,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           }
           spikes.splice(0).forEach(item => item.element.remove());
           ball.classList.add('project-ball--exploding');
+          hint.hidden = true;
           respawnLeft = 0.85;
           release();
           altitude = vy = vx = 0;
@@ -229,9 +243,18 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     };
     const jump = () => {
       // Jump only from the ground: repeated clicks cannot escape the play area.
-      if (respawnLeft > 0 || altitude > 0.5) return;
+      if (respawnLeft > 0 || altitude > 0.5 || vy > 0) return;
       measure();
+      if (maxAltitude <= 0) return;
       vy = Math.sqrt(2 * 1000 * maxAltitude);
+      tutorialJumpsRef.current = Math.min(5, tutorialJumpsRef.current + 1);
+      try {
+        window.localStorage.setItem(TUTORIAL_STORAGE_KEY, String(tutorialJumpsRef.current));
+      } catch { /* Preserve the in-memory count if browser storage is blocked. */ }
+      if (tutorialJumpsRef.current >= 5) {
+        hint.hidden = true;
+        clickRipples.splice(0).forEach(ripple => ripple.element.remove());
+      }
       start();
     };
     const release = () => {
@@ -242,7 +265,15 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     jumpRef.current = () => { jump(); release(); };
 
     const move = (event: PointerEvent) => {
-      targetX = clampX(event.clientX - area.getBoundingClientRect().left);
+      const bounds = area.getBoundingClientRect();
+      targetX = clampX(event.clientX - bounds.left);
+      const onCard = (event.target as Element).closest('.project-card');
+      hint.hidden = event.pointerType !== 'mouse' || Boolean(onCard) || tutorialJumpsRef.current >= 5 || respawnLeft > 0;
+      if (!hint.hidden) {
+        const hintX = Math.max(24, Math.min(width - 24, event.clientX - bounds.left));
+        const hintY = Math.max(24, Math.min(height - 18, event.clientY - bounds.top - 18));
+        hint.style.transform = `translate3d(${hintX}px, ${hintY}px, 0) translate(-50%, -100%)`;
+      }
       start();
     };
     const press = (event: PointerEvent) => {
@@ -252,6 +283,15 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       held = true;
       area.classList.add('recent-playground--holding');
       move(event);
+      if (tutorialJumpsRef.current < 5) {
+        const bounds = area.getBoundingClientRect();
+        const element = document.createElement('span');
+        element.className = 'game-jump-ripple';
+        element.style.left = `${event.clientX - bounds.left}px`;
+        element.style.top = `${event.clientY - bounds.top}px`;
+        foreground.append(element);
+        clickRipples.push({ element, age: 0 });
+      }
       jump();
     };
     const keyDown = (event: KeyboardEvent) => {
@@ -276,7 +316,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       // The top of the stretched ball stops just below the lowest card edge.
       maxAltitude = cards.length ? Math.max(0, height - cardsBottom - RADIUS * 2 * 1.12 - 4) : 0;
       altitude = Math.min(altitude, maxAltitude);
-      pickups.forEach(pickup => { pickup.x = Math.min(width - SQUARE_SIZE, pickup.x); });
+      pickups.forEach(pickup => { pickup.x = Math.min(width - PICKUP_SIZE, pickup.x); });
       paint();
     };
     measure();
@@ -287,10 +327,11 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     if (grid) resize.observe(grid);
     area.addEventListener('pointermove', move);
     area.addEventListener('pointerdown', press);
-    area.addEventListener('pointerleave', release);
+    const leave = () => { release(); hint.hidden = true; };
+    area.addEventListener('pointerleave', leave);
     window.addEventListener('pointerup', release);
     window.addEventListener('pointercancel', release);
-    window.addEventListener('blur', release);
+    window.addEventListener('blur', leave);
     ball.addEventListener('keydown', keyDown);
     ball.addEventListener('keyup', keyUp);
     const clearEffects = () => {
@@ -298,6 +339,8 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       pops.splice(0).forEach(pop => pop.element.remove());
       spikes.splice(0).forEach(spike => spike.element.remove());
       particles.splice(0).forEach(particle => particle.element.remove());
+      clickRipples.splice(0).forEach(ripple => ripple.element.remove());
+      hint.hidden = true;
       respawnLeft = 0;
       ball.classList.remove('project-ball--exploding');
     };
@@ -329,10 +372,10 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       clearEffects();
       area.removeEventListener('pointermove', move);
       area.removeEventListener('pointerdown', press);
-      area.removeEventListener('pointerleave', release);
+      area.removeEventListener('pointerleave', leave);
       window.removeEventListener('pointerup', release);
       window.removeEventListener('pointercancel', release);
-      window.removeEventListener('blur', release);
+      window.removeEventListener('blur', leave);
       ball.removeEventListener('keydown', keyDown);
       ball.removeEventListener('keyup', keyUp);
       release();
@@ -344,6 +387,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     <div className="recent-playground" ref={areaRef}>
       {children}
       {enabled && <div className="recent-playground__layer">
+        <span ref={hintRef} className="game-jump-hint" aria-hidden="true" hidden>jump</span>
         <button
           ref={ballRef}
           type="button"

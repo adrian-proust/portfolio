@@ -1,11 +1,16 @@
-/** Circle/ellipse against an axis-aligned square, including corner contacts. */
-export function ballTouchesSquare(
+/** Rounded collision bounds follow both the ball's squash and the circular pickup. */
+export function ballTouchesCircle(
   ballX: number, ballY: number, radiusX: number, radiusY: number,
-  squareX: number, squareY: number, size: number,
+  circleX: number, circleY: number, radius: number,
 ) {
-  const dx = Math.max(Math.abs(ballX - squareX) - size / 2, 0) / radiusX;
-  const dy = Math.max(Math.abs(ballY - squareY) - size / 2, 0) / radiusY;
+  const dx = (ballX - circleX) / (radiusX + radius);
+  const dy = (ballY - circleY) / (radiusY + radius);
   return dx * dx + dy * dy <= 1;
+}
+
+export function nextSpikeSpeed(previous: number, random = Math.random()) {
+  const sampled = 80 + random * 260;
+  return Math.abs(sampled - previous) >= 100 ? sampled : previous < 210 ? previous + 110 : previous - 110;
 }
 
 export function spikeLimit(score: number) {
