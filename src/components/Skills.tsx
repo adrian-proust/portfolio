@@ -4,7 +4,7 @@ import './Skills.css';
 
 export default function Skills() {
   return (
-    <div className="skills">
+    <div className="skills about-panel">
       <SectionLabel index="02" label="Skills" />
       <div>
         <ol className="skills__list">

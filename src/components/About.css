@@ -1,8 +1,16 @@
-.about {
+.about-panels {
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) 3fr;
-  gap: clamp(1.5rem, 4vw, 4rem);
-  padding-bottom: clamp(3rem, 7vw, 6rem);
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.about-panel {
+  min-width: 0;
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  padding: clamp(1.25rem, 4vw, 3rem);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg-raised);
 }
 
 .about__body {
@@ -20,13 +28,29 @@
 }
 
 .about__text {
-  max-width: 62ch;
+  max-width: 85ch;
   font-size: clamp(1.02rem, 1.4vw, 1.18rem);
   color: rgba(242, 239, 230, 0.78);
 }
 
-@media (max-width: 860px) {
-  .about {
+.education .timeline {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  padding-left: 0;
+}
+
+.education .timeline::before,
+.education .timeline__item::before {
+  content: none;
+}
+
+.education .timeline__item {
+  border-top: 1px solid var(--line);
+  padding-top: 1.5rem;
+}
+
+@media (max-width: 700px) {
+  .education .timeline {
     grid-template-columns: 1fr;
   }
 }

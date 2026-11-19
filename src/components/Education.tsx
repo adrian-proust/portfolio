@@ -4,7 +4,7 @@ import './Experience.css';
 
 export default function Education() {
   return (
-    <div className="split">
+    <div className="education about-panel">
       <SectionLabel index="03" label="Education" />
       <ol className="timeline">
         {education.map((item) => (

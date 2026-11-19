@@ -10,8 +10,8 @@ export default function About() {
   return (
     <section id="AboutMe" className="section">
       <MarqueeBanner text="About me" reverse />
-      <div className="container">
-        <div className="about">
+      <div className="container about-panels">
+        <div className="about about-panel">
           <SectionLabel index="01" label="About" />
           <div className="about__body">
             <h2 className="about__lead reveal">{about.lead}</h2>
