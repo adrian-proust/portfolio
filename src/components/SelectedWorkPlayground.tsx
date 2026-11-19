@@ -1,17 +1,19 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { segmentHitsCircle } from '../lib/slingshotGame';
+import { segmentHitsCircle, targetDifficulty } from '../lib/slingshotGame';
 import './SelectedWorkPlayground.css';
 
 const BALL_RADIUS = 12;
-const TARGET_RADIUS = 85.5;
 
-export default function SelectedWorkPlayground({ children, enabled, onHit, onMiss }: {
-  children: ReactNode; enabled: boolean; onHit: () => void; onMiss: () => void;
+export default function SelectedWorkPlayground({ children, enabled, score, onHit, onMiss }: {
+  children: ReactNode; enabled: boolean; score: number; onHit: () => void; onMiss: () => void;
 }) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
   const targetRef = useRef<SVGSVGElement>(null);
   const ropesRef = useRef<SVGSVGElement>(null);
+  const scoreRef = useRef(score);
+  const difficultyRef = useRef<() => void>(() => {});
+  useEffect(() => { scoreRef.current = score; difficultyRef.current(); }, [score]);
 
   useEffect(() => {
     const area = areaRef.current;
@@ -25,6 +27,12 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
     let vx = 0, vy = 0, frame = 0, lastTime = 0;
     let pointer: number | null = null;
     let flying = false;
+    let active = true;
+    let inView = true;
+    let targetDirection = 1;
+    let radius = targetDifficulty(scoreRef.current).radius;
+    let targetSpeed = targetDifficulty(scoreRef.current).speed;
+    let sideMargin = 0;
     const effects = new Set<HTMLElement>();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let growAnimation: Animation | undefined;
@@ -42,7 +50,7 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
       return node;
     };
     const burst = (atX: number, atY: number, impact: boolean) => {
-      const size = impact ? TARGET_RADIUS * 2 : 26;
+      const size = impact ? radius * 2 : 26;
       for (let i = 0; i < (impact ? 3 : 1); i++) {
         effect('selected-game__shockwave', atX, atY, [
           { transform: 'translate(-50%, -50%) scale(0.6)', opacity: 0.9 },
@@ -65,11 +73,17 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
     };
     const lines = Array.from(ropes.querySelectorAll('line'));
     const handle = ropes.querySelector('path');
+    const aim = ropes.querySelector<SVGPathElement>('.selected-game__aim');
     const paint = () => {
       ball.style.transform = `translate3d(${x - BALL_RADIUS}px, ${y - BALL_RADIUS}px, 0)`;
-      target.style.transform = `translate3d(${targetX - TARGET_RADIUS}px, ${targetY - TARGET_RADIUS}px, 0)`;
+      target.style.transform = `translate3d(${targetX - radius}px, ${targetY - radius}px, 0)`;
       ball.dataset.state = flying ? 'flying' : pointer === null ? 'ready' : 'dragging';
-      handle?.setAttribute('d', `M ${anchorX - 44} ${anchorY} L ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY - 25} M ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY + 25}`);
+      handle?.setAttribute('d', `M 0 ${anchorY} L ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY - 25} M ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY + 25}`);
+      const pullX = anchorX - x, pullY = anchorY - y;
+      const pullLength = Math.hypot(pullX, pullY);
+      const aiming = pointer !== null && pullX >= 5;
+      aim?.setAttribute('visibility', aiming ? 'visible' : 'hidden');
+      if (aiming) aim?.setAttribute('d', `M ${x} ${y} l ${pullX / pullLength * 150} ${pullY / pullLength * 150}`);
       lines.forEach((line, i) => {
         line.setAttribute('x1', String(anchorX + 14));
         line.setAttribute('y1', String(anchorY + (i ? 25 : -25)));
@@ -80,9 +94,9 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
     const placeTarget = (first = false) => {
       const range = Math.min(240, height * 0.24);
       const previous = targetY;
-      targetY = first ? anchorY : Math.max(TARGET_RADIUS, Math.min(height - TARGET_RADIUS, anchorY + (Math.random() * 2 - 1) * range));
+      targetY = first ? anchorY : Math.max(radius, Math.min(height - radius, anchorY + (Math.random() * 2 - 1) * range));
       if (!first && Math.abs(targetY - previous) < 65) {
-        targetY = Math.max(TARGET_RADIUS, Math.min(height - TARGET_RADIUS, previous <= anchorY ? anchorY + range * 0.8 : anchorY - range * 0.8));
+        targetY = Math.max(radius, Math.min(height - radius, previous <= anchorY ? anchorY + range * 0.8 : anchorY - range * 0.8));
       }
       growAnimation?.cancel();
       growAnimation = target.querySelector('g')?.animate([
@@ -101,12 +115,24 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
       x = anchorX;
       y = anchorY;
       paint();
+      if (active && targetSpeed > 0) start();
     };
+    function start() { if (active && !frame) frame = requestAnimationFrame(tick); }
     const tick = (now: number) => {
       frame = 0;
-      if (!flying) return;
+      if (!active) return;
       const dt = lastTime ? Math.min((now - lastTime) / 1000, 0.032) : 1 / 60;
       lastTime = now;
+      const previousTargetY = targetY;
+      if (targetSpeed > 0) {
+        const range = Math.min(240, height * 0.24);
+        const top = Math.max(radius, anchorY - range);
+        const bottom = Math.min(height - radius, anchorY + range);
+        targetY += targetDirection * targetSpeed * dt;
+        if (targetY >= bottom) { targetY = bottom; targetDirection = -1; }
+        if (targetY <= top) { targetY = top; targetDirection = 1; }
+      }
+      if (!flying) { paint(); if (targetSpeed > 0) start(); return; }
       const nextX = x + vx * dt;
       const nextY = y + vy * dt;
       if (!reducedMotion.matches) {
@@ -115,7 +141,7 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
         trail.style.width = `${length + 2}px`;
         trail.style.transform = `rotate(${Math.atan2(nextY - y, nextX - x)}rad)`;
       }
-      if (segmentHitsCircle(x, y, nextX, nextY, targetX, targetY, BALL_RADIUS + TARGET_RADIUS)) {
+      if (segmentHitsCircle(x, y - previousTargetY, nextX, nextY - targetY, targetX, 0, BALL_RADIUS + radius)) {
         burst(targetX, targetY, true);
         onHit();
         placeTarget();
@@ -130,7 +156,7 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
         return;
       }
       paint();
-      frame = requestAnimationFrame(tick);
+      start();
     };
     const fire = () => {
       const pullX = anchorX - x;
@@ -146,7 +172,7 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
       pointer = null;
       lastTime = 0;
       paint();
-      frame = requestAnimationFrame(tick);
+      start();
     };
     const drag = (event: PointerEvent) => {
       if (event.pointerId !== pointer) return;
@@ -191,7 +217,12 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
       const margin = bounds.left - areaBounds.left + padding;
       anchorX = Math.max(32, margin * 0.7);
       anchorY = height / 2;
-      targetX = width - Math.max(TARGET_RADIUS + 6, margin * 0.5);
+      sideMargin = margin;
+      const difficulty = targetDifficulty(scoreRef.current);
+      radius = difficulty.radius;
+      targetSpeed = difficulty.speed;
+      target.style.width = target.style.height = `${radius * 2}px`;
+      targetX = width - Math.max(radius + 6, margin * 0.5);
       clearEffects();
       placeTarget(true);
       reset();
@@ -200,17 +231,32 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
     resize.observe(area);
     resize.observe(content);
     measure();
+    difficultyRef.current = () => {
+      const difficulty = targetDifficulty(scoreRef.current);
+      radius = difficulty.radius;
+      targetSpeed = difficulty.speed;
+      target.style.width = target.style.height = `${radius * 2}px`;
+      targetX = width - Math.max(radius + 6, sideMargin * 0.5);
+      targetY = Math.max(radius, Math.min(height - radius, targetY));
+      paint();
+      if (targetSpeed > 0) start();
+    };
     ball.addEventListener('pointerdown', down);
     ball.addEventListener('pointermove', drag);
     ball.addEventListener('pointerup', up);
     ball.addEventListener('pointercancel', cancel);
     ball.addEventListener('lostpointercapture', cancel);
     ball.addEventListener('keydown', keys);
-    const pause = () => { reset(); clearEffects(); };
+    const pause = () => { active = false; reset(); clearEffects(); };
     window.addEventListener('blur', pause);
-    const visibility = new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) pause(); });
+    const syncActive = () => {
+      if (!inView || document.hidden) pause();
+      else { active = true; lastTime = 0; if (flying || targetSpeed > 0) start(); }
+    };
+    const visibility = new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; syncActive(); });
     visibility.observe(area);
-    const hidden = () => { if (document.hidden) pause(); };
+    const hidden = syncActive;
+    window.addEventListener('focus', syncActive);
     document.addEventListener('visibilitychange', hidden);
     return () => {
       resize.disconnect();
@@ -223,6 +269,8 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
       ball.removeEventListener('lostpointercapture', cancel);
       ball.removeEventListener('keydown', keys);
       window.removeEventListener('blur', pause);
+      window.removeEventListener('focus', syncActive);
+      difficultyRef.current = () => {};
       pause();
     };
   }, [enabled, onHit, onMiss]);
@@ -231,7 +279,7 @@ export default function SelectedWorkPlayground({ children, enabled, onHit, onMis
     <div className={`selected-game${enabled ? ' selected-game--enabled' : ''}`} ref={areaRef}>
       {children}
       {enabled && <div className="selected-game__layer">
-        <svg ref={ropesRef} className="selected-game__ropes" aria-hidden="true"><path className="selected-game__handle" /><line /><line /></svg>
+        <svg ref={ropesRef} className="selected-game__ropes" aria-hidden="true"><path className="selected-game__handle" /><line /><line /><path className="selected-game__aim" visibility="hidden" /></svg>
         <svg ref={targetRef} className="selected-game__target" viewBox="0 0 38 38" aria-hidden="true">
           <g><circle cx="19" cy="19" r="18" /><circle cx="19" cy="19" r="11" /><circle cx="19" cy="19" r="2" /></g>
         </svg>

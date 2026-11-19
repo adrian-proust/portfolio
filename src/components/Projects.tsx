@@ -38,7 +38,7 @@ export default function Projects({ onSelectProject }: Props) {
       }}
     >
       <MarqueeBanner text="Projects" />
-      <SelectedWorkPlayground enabled={miniGamesEnabled} onHit={hitTarget} onMiss={missTarget}>
+      <SelectedWorkPlayground enabled={miniGamesEnabled} score={gameScore} onHit={hitTarget} onMiss={missTarget}>
       <div className="container projects__playground">
         <div className="projects__header reveal">
           <h2 className="display-lg">
