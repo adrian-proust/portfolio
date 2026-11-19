@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { Project, ProjectCategory } from '../data/types';
 import { projectCategories, projects } from '../data/portfolio';
 import { useReveal } from '../hooks/useReveal';
@@ -6,6 +6,7 @@ import { useMiniGamesEnabled } from '../hooks/useMiniGamesEnabled';
 import MarqueeBanner from './MarqueeBanner';
 import ProjectCard from './ProjectCard';
 import GameScore from './GameScore';
+import SelectedWorkPlayground from './SelectedWorkPlayground';
 import './Projects.css';
 
 const filters = projectCategories.map((category) => category.id);
@@ -16,6 +17,8 @@ type Props = {
 
 export default function Projects({ onSelectProject }: Props) {
   const miniGamesEnabled = useMiniGamesEnabled();
+  const [gameScore, setGameScore] = useState(0);
+  const hitTarget = useCallback(() => setGameScore(score => score + 1), []);
   const [filter, setFilter] = useState<ProjectCategory>(filters[0]);
   const visible = useMemo(
     () => projects.filter((p) => p.category === filter),
@@ -26,7 +29,7 @@ export default function Projects({ onSelectProject }: Props) {
   return (
     <section
       id="Projects"
-      className={`section${miniGamesEnabled ? ' projects--mouse-play' : ''}`}
+      className={`section projects-section${miniGamesEnabled ? ' projects--mouse-play' : ''}`}
       onPointerDown={(event) => {
         if (!miniGamesEnabled || event.pointerType !== 'mouse' || event.button !== 0) return;
         const target = event.target as Element;
@@ -34,13 +37,14 @@ export default function Projects({ onSelectProject }: Props) {
       }}
     >
       <MarqueeBanner text="Projects" />
+      <SelectedWorkPlayground enabled={miniGamesEnabled} onHit={hitTarget}>
       <div className="container projects__playground">
         <div className="projects__header reveal">
           <h2 className="display-lg">
             Selected <br />
             work<span className="accent">.</span>
           </h2>
-          {miniGamesEnabled && <GameScore score={0} game="selected-work" />}
+          {miniGamesEnabled && <GameScore score={gameScore} game="selected-work" />}
         </div>
 
         <div className="filters reveal" role="group" aria-label="Filter projects by category">
@@ -70,6 +74,7 @@ export default function Projects({ onSelectProject }: Props) {
           ))}
         </div>
       </div>
+      </SelectedWorkPlayground>
     </section>
   );
 }
