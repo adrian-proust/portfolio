@@ -13,6 +13,12 @@
   z-index: 2;
 }
 
+.recent-playground--holding,
+.recent-playground--holding *:not(.project-card):not(.project-card *) {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .project-ball {
   position: absolute;
   top: 0;
@@ -26,6 +32,13 @@
   pointer-events: auto;
   cursor: pointer;
   touch-action: manipulation;
+  transform-origin: center bottom;
+}
+
+@media (max-width: 860px), (hover: none), (pointer: coarse) {
+  .recent-playground__layer {
+    display: none;
+  }
 }
 
 .project-ball:focus-visible {
