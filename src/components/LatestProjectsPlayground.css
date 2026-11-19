@@ -94,3 +94,30 @@
   outline: 2px solid var(--ink);
   outline-offset: -5px;
 }
+
+.game-spike {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 20px;
+  background: var(--accent);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+}
+
+.project-ball--exploding {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.game-ball-particle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+}

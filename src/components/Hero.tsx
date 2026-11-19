@@ -18,6 +18,7 @@ export default function Hero({ onSelectProject }: Props) {
   const [score, setScore] = useState(0);
   const effectsRef = useRef<HTMLDivElement>(null);
   const collect = useCallback(() => setScore(value => value + 1), []);
+  const resetScore = useCallback(() => setScore(0), []);
 
   return (
     <section id="Home" className="section hero-section">
@@ -47,7 +48,7 @@ export default function Hero({ onSelectProject }: Props) {
           {enabled && <GameScore score={score} />}
         </div>
       </div>
-      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} onCollect={collect}>
+      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore}>
         <div className="container recent__group">
           <div className="recent__group-header reveal">
             <h2 className="display-md">{homeProjects.title}</h2>

@@ -7,3 +7,32 @@ export function ballTouchesSquare(
   const dy = Math.max(Math.abs(ballY - squareY) - size / 2, 0) / radiusY;
   return dx * dx + dy * dy <= 1;
 }
+
+export function spikeLimit(score: number) {
+  return score < 5 ? 0 : Math.max(1, Math.floor(score / 10));
+}
+
+/** Test the actual triangle against the ball's current ellipse. */
+export function ballTouchesSpike(
+  ballX: number, ballY: number, radiusX: number, radiusY: number,
+  spikeX: number, width: number, height: number,
+) {
+  const vertices = [
+    [(spikeX - width / 2 - ballX) / radiusX, -ballY / radiusY],
+    [(spikeX - ballX) / radiusX, (height - ballY) / radiusY],
+    [(spikeX + width / 2 - ballX) / radiusX, -ballY / radiusY],
+  ];
+  const sides = vertices.map(([ax, ay], i) => {
+    const [bx, by] = vertices[(i + 1) % 3];
+    return ax * by - ay * bx;
+  });
+  if (sides.every(value => value >= 0) || sides.every(value => value <= 0)) return true;
+
+  return vertices.some(([ax, ay], i) => {
+    const [bx, by] = vertices[(i + 1) % 3];
+    const dx = bx - ax;
+    const dy = by - ay;
+    const t = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / (dx * dx + dy * dy)));
+    return (ax + t * dx) ** 2 + (ay + t * dy) ** 2 <= 1;
+  });
+}
