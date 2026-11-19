@@ -123,6 +123,23 @@
   pointer-events: none;
 }
 
+.game-ball-reform {
+  opacity: 0;
+}
+
+.game-ball-reform-core {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform-origin: center;
+  pointer-events: none;
+  opacity: 0;
+}
+
 .game-jump-hint {
   position: absolute;
   top: 0;

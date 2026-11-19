@@ -8,11 +8,14 @@ const PICKUP_SIZE = 18;
 let tutorialJumpsForPage = 0;
 const SPIKE_WIDTH = 18;
 const SPIKE_HEIGHT = 20;
+const RESPAWN_DURATION = 1.45;
+const REFORM_DURATION = 0.75;
 
 type Pickup = { element: HTMLSpanElement; x: number; altitude: number; speed: number; landed: number | null };
 type Pop = { element: HTMLSpanElement; age: number };
 type Spike = { element: HTMLSpanElement; x: number; speed: number };
 type Particle = { element: HTMLSpanElement; x: number; altitude: number; vx: number; vy: number; age: number };
+type ReformParticle = { element: HTMLSpanElement; dx: number; dy: number };
 type Props = {
   children: ReactNode;
   enabled: boolean;
@@ -63,6 +66,8 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     const pops: Pop[] = [];
     const spikes: Spike[] = [];
     const particles: Particle[] = [];
+    const reformParticles: ReformParticle[] = [];
+    let reformCore: HTMLSpanElement | null = null;
     const clickRipples: Pop[] = [];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     // Reserve room for the slight horizontal stretch at the edges.
@@ -77,7 +82,41 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       lastTime = now;
       if (respawnLeft > 0) {
         respawnLeft = Math.max(0, respawnLeft - dt);
+        if (respawnLeft > 0 && respawnLeft <= REFORM_DURATION) {
+          if (reformParticles.length === 0) {
+            for (let i = 0; i < 12; i++) {
+              const angle = ((i + 0.5) / 12) * Math.PI;
+              const distance = reducedMotion.matches ? 14 : 36 + Math.random() * 28;
+              const element = document.createElement('span');
+              element.className = 'game-ball-particle game-ball-reform';
+              element.setAttribute('aria-hidden', 'true');
+              foreground.append(element);
+              reformParticles.push({ element, dx: Math.cos(angle) * distance, dy: Math.sin(angle) * distance });
+            }
+            reformCore = document.createElement('span');
+            reformCore.className = 'game-ball-reform-core';
+            reformCore.setAttribute('aria-hidden', 'true');
+            foreground.append(reformCore);
+          }
+          const progress = 1 - respawnLeft / REFORM_DURATION;
+          const convergence = progress * progress * (3 - 2 * progress);
+          const respawnX = clampX(width * 0.18);
+          for (const particle of reformParticles) {
+            const px = respawnX + particle.dx * (1 - convergence);
+            const py = height - RADIUS - particle.dy * (1 - convergence);
+            particle.element.style.transform = `translate3d(${px - 3}px, ${py - 3}px, 0)`;
+            particle.element.style.opacity = String(Math.min(1, progress / 0.3) * (1 - progress * 0.3));
+          }
+          if (reformCore) {
+            const growth = progress * progress;
+            reformCore.style.transform = `translate3d(${respawnX - RADIUS}px, ${height - RADIUS * 2}px, 0) scale(${growth})`;
+            reformCore.style.opacity = String(growth);
+          }
+        }
         if (respawnLeft === 0) {
+          reformParticles.splice(0).forEach(particle => particle.element.remove());
+          reformCore?.remove();
+          reformCore = null;
           x = targetX = clampX(width * 0.18);
           altitude = vy = vx = 0;
           scaleX = scaleY = 1;
@@ -208,7 +247,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           spikes.splice(0).forEach(item => item.element.remove());
           ball.classList.add('project-ball--exploding');
           hint.hidden = true;
-          respawnLeft = 0.85;
+          respawnLeft = RESPAWN_DURATION;
           release();
           altitude = vy = vx = 0;
           scoreRef.current = 0;
@@ -334,6 +373,9 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       pops.splice(0).forEach(pop => pop.element.remove());
       spikes.splice(0).forEach(spike => spike.element.remove());
       particles.splice(0).forEach(particle => particle.element.remove());
+      reformParticles.splice(0).forEach(particle => particle.element.remove());
+      reformCore?.remove();
+      reformCore = null;
       clickRipples.splice(0).forEach(ripple => ripple.element.remove());
       hint.hidden = true;
       respawnLeft = 0;
