@@ -2,8 +2,10 @@ import { useMemo, useState } from 'react';
 import type { Project, ProjectCategory } from '../data/types';
 import { projectCategories, projects } from '../data/portfolio';
 import { useReveal } from '../hooks/useReveal';
+import { useMiniGamesEnabled } from '../hooks/useMiniGamesEnabled';
 import MarqueeBanner from './MarqueeBanner';
 import ProjectCard from './ProjectCard';
+import GameScore from './GameScore';
 import './Projects.css';
 
 const filters = projectCategories.map((category) => category.id);
@@ -13,6 +15,7 @@ type Props = {
 };
 
 export default function Projects({ onSelectProject }: Props) {
+  const miniGamesEnabled = useMiniGamesEnabled();
   const [filter, setFilter] = useState<ProjectCategory>(filters[0]);
   const visible = useMemo(
     () => projects.filter((p) => p.category === filter),
@@ -23,16 +26,20 @@ export default function Projects({ onSelectProject }: Props) {
   return (
     <section id="Projects" className="section">
       <MarqueeBanner text="Projects" />
-      <div className="container">
+      <div
+        className="container projects__playground"
+        onPointerDown={(event) => {
+          if (!miniGamesEnabled || event.pointerType !== 'mouse' || event.button !== 0) return;
+          const target = event.target as Element;
+          if (!target.closest('.project-card, a, button, [role="button"]')) event.preventDefault();
+        }}
+      >
         <div className="projects__header reveal">
           <h2 className="display-lg">
             Selected <br />
             work<span className="accent">.</span>
           </h2>
-          <p className="projects__intro">
-            {projects.length} projects across released games, school productions and game jam
-            prototypes. Each one taught me meaningful lessons.
-          </p>
+          {miniGamesEnabled && <GameScore score={0} showPickup={false} />}
         </div>
 
         <div className="filters reveal" role="group" aria-label="Filter projects by category">

@@ -7,9 +7,8 @@
   margin-bottom: 2.5rem;
 }
 
-.projects__intro {
-  max-width: 380px;
-  color: var(--muted);
+.projects__header .game-score {
+  align-self: flex-start;
 }
 
 .filters {

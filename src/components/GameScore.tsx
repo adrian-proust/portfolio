@@ -11,11 +11,11 @@ const segments = [
   ['g', '8,34 32,34 36,38 32,42 8,42 4,38'],
 ] as const;
 
-export default function GameScore({ score }: { score: number }) {
+export default function GameScore({ score, showPickup = true }: { score: number; showPickup?: boolean }) {
   return (
     <output className="game-score" aria-label={`Game score: ${score}`} aria-live="polite" aria-atomic="true">
       <span className="game-score__label mono" aria-hidden="true">
-        <span className="game-score__pickup" /> = Score
+        {showPickup && <><span className="game-score__pickup" /> = </>}Score
       </span>
       <span className="game-score__digits" key={score} aria-hidden="true">
         {String(score).padStart(3, '0').split('').map((digit, i) => (

@@ -4,7 +4,8 @@ import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
 const PICKUP_SIZE = 18;
-const TUTORIAL_STORAGE_KEY = 'portfolio.ball.jumpCount';
+// Keep progress only for the current page lifetime; a refresh starts the help again.
+let tutorialJumpsForPage = 0;
 const SPIKE_WIDTH = 18;
 const SPIKE_HEIGHT = 20;
 
@@ -25,7 +26,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
   const hintRef = useRef<HTMLSpanElement>(null);
-  const tutorialJumpsRef = useRef(0);
+  const tutorialJumpsRef = useRef(tutorialJumpsForPage);
   const jumpRef = useRef<() => void>(() => {});
   const scoreRef = useRef(score);
   useEffect(() => { scoreRef.current = score; }, [score]);
@@ -38,10 +39,6 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     const home = area?.closest<HTMLElement>('#Home');
     const foreground = ball?.parentElement;
     if (!enabled || !area || !ball || !hint || !effects || !home || !foreground) return;
-    try {
-      const stored = Number(window.localStorage.getItem(TUTORIAL_STORAGE_KEY));
-      if (Number.isFinite(stored)) tutorialJumpsRef.current = Math.max(tutorialJumpsRef.current, Math.min(5, Math.max(0, Math.floor(stored))));
-    } catch { /* The tutorial still works for this visit when storage is unavailable. */ }
 
     let width = area.clientWidth;
     let height = area.clientHeight;
@@ -248,9 +245,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       if (maxAltitude <= 0) return;
       vy = Math.sqrt(2 * 1000 * maxAltitude);
       tutorialJumpsRef.current = Math.min(5, tutorialJumpsRef.current + 1);
-      try {
-        window.localStorage.setItem(TUTORIAL_STORAGE_KEY, String(tutorialJumpsRef.current));
-      } catch { /* Preserve the in-memory count if browser storage is blocked. */ }
+      tutorialJumpsForPage = tutorialJumpsRef.current;
       if (tutorialJumpsRef.current >= 5) {
         hint.hidden = true;
         clickRipples.splice(0).forEach(ripple => ripple.element.remove());
