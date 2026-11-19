@@ -46,9 +46,6 @@ export default function Hero({ onNavigate, onSelectProject }: Props) {
               Scroll down
             </a>
           </div>
-          <a className="link-arrow mono" href="?Page=Projects" onClick={go('Projects')}>
-            See all projects →
-          </a>
         </div>
       </div>
       <LatestProjectsPlayground>
