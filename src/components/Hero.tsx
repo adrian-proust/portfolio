@@ -1,8 +1,10 @@
-import type { MouseEvent } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { Project, SectionId } from '../data/types';
 import { homeProjects, profile, projects, RECENT_PROJECTS_COUNT } from '../data/portfolio';
 import ProjectCard from './ProjectCard';
 import LatestProjectsPlayground from './LatestProjectsPlayground';
+import GameScore from './GameScore';
+import { useMiniGamesEnabled } from '../hooks/useMiniGamesEnabled';
 import './Hero.css';
 
 type Props = {
@@ -10,16 +12,16 @@ type Props = {
   onSelectProject?: (project: Project) => void;
 };
 
-export default function Hero({ onNavigate, onSelectProject }: Props) {
+export default function Hero({ onSelectProject }: Props) {
   const latestProjects = projects.slice(0, RECENT_PROJECTS_COUNT);
-
-  const go = (id: SectionId) => (event: MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    onNavigate(id);
-  };
+  const enabled = useMiniGamesEnabled();
+  const [score, setScore] = useState(0);
+  const effectsRef = useRef<HTMLDivElement>(null);
+  const collect = useCallback(() => setScore(value => value + 1), []);
 
   return (
     <section id="Home" className="section hero-section">
+      {enabled && <div className="home-game-effects" ref={effectsRef} aria-hidden="true" />}
       <div className="container recent">
         <div className="recent__meta mono">
           <span>Portfolio — {new Date().getFullYear()}</span>
@@ -41,14 +43,11 @@ export default function Hero({ onNavigate, onSelectProject }: Props) {
                 ))}
               </span>
             </p>
-            <a className="hero__scroll hero__scroll--inline mono" href="?Page=AboutMe" onClick={go('AboutMe')}>
-              <span className="hero__scroll-line" aria-hidden="true" />
-              Scroll down
-            </a>
           </div>
+          {enabled && <GameScore score={score} />}
         </div>
       </div>
-      <LatestProjectsPlayground>
+      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} onCollect={collect}>
         <div className="container recent__group">
           <div className="recent__group-header reveal">
             <h2 className="display-md">{homeProjects.title}</h2>

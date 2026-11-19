@@ -1,0 +1,35 @@
+.game-score {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: end;
+  color: var(--accent);
+}
+
+.game-score__label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.game-score__digits {
+  display: flex;
+  gap: clamp(0.35rem, 0.8vw, 0.7rem);
+  animation: score-digital 0.36s steps(2, end);
+}
+
+.game-score__digit {
+  width: clamp(2rem, 4vw, 3.5rem);
+  height: auto;
+  fill: currentColor;
+}
+
+@keyframes score-digital {
+  0% { opacity: 0.35; transform: translateY(3px); }
+  35% { opacity: 1; transform: translateX(2px); filter: brightness(1.6); }
+  65% { opacity: 0.6; transform: translateX(-1px); }
+  100% { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-score__digits { animation: none; }
+}

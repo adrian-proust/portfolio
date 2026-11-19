@@ -3,6 +3,55 @@
   margin-top: clamp(2rem, 5vw, 3.5rem);
   padding-bottom: clamp(4rem, 10vw, 8rem);
   isolation: isolate;
+  z-index: 1;
+}
+
+.home-game-effects {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.game-pickup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  background: #0d0d0c;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 7px rgba(255, 90, 31, 0.22);
+}
+
+.game-pickup--landed {
+  animation: pickup-blink 0.8s ease-out forwards;
+}
+
+.game-pickup-pop {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  animation: pickup-pop 0.45s ease-out forwards;
+}
+
+@keyframes pickup-blink {
+  0%, 40%, 75% { opacity: 0.85; }
+  20%, 60% { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
+@keyframes pickup-pop {
+  from { transform: translate(-50%, -50%) scale(0.6); opacity: 0.85; }
+  to { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-pickup--landed { animation: none; opacity: 0.5; }
+  .game-pickup-pop { animation: none; transform: translate(-50%, -50%); }
 }
 
 .recent-playground__layer {

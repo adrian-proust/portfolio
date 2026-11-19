@@ -1,19 +1,30 @@
-import { useEffect, useRef, type ReactNode } from 'react';
-import { useMiniGamesEnabled } from '../hooks/useMiniGamesEnabled';
+import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
+import { ballTouchesSquare } from '../lib/ballGame';
 import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
+const SQUARE_SIZE = 18;
 
-export default function LatestProjectsPlayground({ children }: { children: ReactNode }) {
+type Pickup = { element: HTMLSpanElement; x: number; altitude: number; speed: number; landed: number | null };
+type Pop = { element: HTMLSpanElement; age: number };
+type Props = {
+  children: ReactNode;
+  enabled: boolean;
+  effectsRef: RefObject<HTMLDivElement | null>;
+  onCollect: () => void;
+};
+
+export default function LatestProjectsPlayground({ children, enabled, effectsRef, onCollect }: Props) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
   const jumpRef = useRef<() => void>(() => {});
-  const enabled = useMiniGamesEnabled();
 
   useEffect(() => {
     const area = areaRef.current;
     const ball = ballRef.current;
-    if (!enabled || !area || !ball) return;
+    const effects = effectsRef.current;
+    const home = area?.closest<HTMLElement>('#Home');
+    if (!enabled || !area || !ball || !effects || !home) return;
 
     let width = area.clientWidth;
     let height = area.clientHeight;
@@ -28,6 +39,12 @@ export default function LatestProjectsPlayground({ children }: { children: React
     let maxAltitude = 0;
     let scaleX = 1;
     let scaleY = 1;
+    let active = false;
+    let inView = false;
+    let untilSpawn = 0.45;
+    let homeHeight = home.clientHeight;
+    const pickups: Pickup[] = [];
+    const pops: Pop[] = [];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     // Reserve room for the slight horizontal stretch at the edges.
     const clampX = (value: number) => Math.max(RADIUS * 1.16, Math.min(width - RADIUS * 1.16, value));
@@ -35,6 +52,8 @@ export default function LatestProjectsPlayground({ children }: { children: React
       ball.style.transform = `translate3d(${x - RADIUS}px, ${height - RADIUS * 2 - altitude}px, 0) scale(${scaleX}, ${scaleY})`;
     };
     const tick = (now: number) => {
+      frame = 0;
+      if (!active) return;
       const dt = lastTime ? Math.min((now - lastTime) / 1000, 0.032) : 1 / 60;
       lastTime = now;
       if (reducedMotion.matches) {
@@ -43,6 +62,7 @@ export default function LatestProjectsPlayground({ children }: { children: React
       } else {
         // A damped spring gives the ball weight as it follows the pointer.
         vx += ((targetX - x) * 65 - vx * 16) * dt;
+        vx = Math.max(-1200, Math.min(1200, vx));
         x = clampX(x + vx * dt);
       }
       // Holding sustains the ascent; releasing makes the ball fall sooner.
@@ -64,15 +84,60 @@ export default function LatestProjectsPlayground({ children }: { children: React
       scaleX += (wantedX - scaleX) * Math.min(1, dt * 20);
       scaleY += (wantedY - scaleY) * Math.min(1, dt * 20);
       paint();
-      if (altitude > 0 || Math.abs(targetX - x) > 0.1 || Math.abs(vx) > 0.1 || Math.abs(scaleX - 1) > 0.001 || Math.abs(scaleY - 1) > 0.001) {
-        frame = requestAnimationFrame(tick);
-      } else {
-        frame = 0;
-        lastTime = 0;
+      untilSpawn -= dt;
+      if (untilSpawn <= 0 && pickups.length < 12) {
+        const element = document.createElement('span');
+        element.className = 'game-pickup';
+        effects.append(element);
+        pickups.push({
+          element,
+          x: SQUARE_SIZE + Math.random() * Math.max(0, width - SQUARE_SIZE * 2),
+          // Start at the top of the visible screen, even after scrolling.
+          altitude: Math.max(0, area.getBoundingClientRect().bottom) + SQUARE_SIZE,
+          speed: 80,
+          landed: null,
+        });
+        untilSpawn = 1.4 + Math.random() * 0.7;
       }
+      for (let i = pickups.length - 1; i >= 0; i--) {
+        const pickup = pickups[i];
+        if (pickup.landed === null) {
+          pickup.speed = Math.min(400, pickup.speed + 320 * dt);
+          pickup.altitude = Math.max(0, pickup.altitude - pickup.speed * dt);
+          if (pickup.altitude === 0) {
+            pickup.landed = 0;
+            pickup.element.classList.add('game-pickup--landed');
+          }
+        } else pickup.landed += dt;
+
+        pickup.element.style.transform = `translate3d(${pickup.x - SQUARE_SIZE / 2}px, ${homeHeight - SQUARE_SIZE - pickup.altitude}px, 0)`;
+        if (ballTouchesSquare(x, altitude + RADIUS * scaleY, RADIUS * scaleX, RADIUS * scaleY,
+          pickup.x, pickup.altitude + SQUARE_SIZE / 2, SQUARE_SIZE)) {
+          const ring = document.createElement('span');
+          ring.className = 'game-pickup-pop';
+          ring.style.left = `${pickup.x}px`;
+          ring.style.top = `${homeHeight - pickup.altitude - SQUARE_SIZE / 2}px`;
+          effects.append(ring);
+          pops.push({ element: ring, age: 0 });
+          pickup.element.remove();
+          pickups.splice(i, 1);
+          onCollect();
+        } else if (pickup.landed !== null && pickup.landed >= 0.8) {
+          pickup.element.remove();
+          pickups.splice(i, 1);
+        }
+      }
+      for (let i = pops.length - 1; i >= 0; i--) {
+        pops[i].age += dt;
+        if (pops[i].age >= 0.45) {
+          pops[i].element.remove();
+          pops.splice(i, 1);
+        }
+      }
+      frame = requestAnimationFrame(tick);
     };
     const start = () => {
-      if (!frame) frame = requestAnimationFrame(tick);
+      if (active && !frame) frame = requestAnimationFrame(tick);
     };
     const jump = () => {
       // Jump only from the ground: repeated clicks cannot escape the play area.
@@ -114,6 +179,7 @@ export default function LatestProjectsPlayground({ children }: { children: React
     const resize = new ResizeObserver(() => {
       width = area.clientWidth;
       height = area.clientHeight;
+      homeHeight = home.clientHeight;
       x = clampX(x);
       targetX = clampX(targetX);
       const cards = Array.from(area.querySelectorAll('.project-card'));
@@ -121,9 +187,11 @@ export default function LatestProjectsPlayground({ children }: { children: React
       // The top of the stretched ball stops just below the lowest card edge.
       maxAltitude = cards.length ? Math.max(0, area.getBoundingClientRect().bottom - cardsBottom - RADIUS * 2 * 1.12 - 4) : 0;
       altitude = Math.min(altitude, maxAltitude);
+      pickups.forEach(pickup => { pickup.x = Math.min(width - SQUARE_SIZE, pickup.x); });
       paint();
     });
     resize.observe(area);
+    resize.observe(home);
     const grid = area.querySelector('.project-grid');
     if (grid) resize.observe(grid);
     area.addEventListener('pointermove', move);
@@ -134,11 +202,36 @@ export default function LatestProjectsPlayground({ children }: { children: React
     window.addEventListener('blur', release);
     ball.addEventListener('keydown', keyDown);
     ball.addEventListener('keyup', keyUp);
+    const clearEffects = () => {
+      pickups.splice(0).forEach(pickup => pickup.element.remove());
+      pops.splice(0).forEach(pop => pop.element.remove());
+    };
+    const updateActive = () => {
+      active = inView && !document.hidden;
+      if (active) start();
+      else {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        lastTime = 0;
+        untilSpawn = 0.45;
+        release();
+        clearEffects();
+      }
+    };
+    const visibility = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      updateActive();
+    });
+    visibility.observe(home);
+    document.addEventListener('visibilitychange', updateActive);
     paint();
     start();
     return () => {
       cancelAnimationFrame(frame);
       resize.disconnect();
+      visibility.disconnect();
+      document.removeEventListener('visibilitychange', updateActive);
+      clearEffects();
       area.removeEventListener('pointermove', move);
       area.removeEventListener('pointerdown', press);
       area.removeEventListener('pointerleave', release);
@@ -150,7 +243,7 @@ export default function LatestProjectsPlayground({ children }: { children: React
       release();
       jumpRef.current = () => {};
     };
-  }, [enabled]);
+  }, [enabled, effectsRef, onCollect]);
 
   return (
     <div className="recent-playground" ref={areaRef}>

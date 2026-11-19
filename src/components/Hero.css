@@ -1,6 +1,13 @@
 .hero-section.section {
+  position: relative;
+  isolation: isolate;
   padding-top: var(--nav-h);
   padding-bottom: 0;
+}
+
+.hero-section > .recent {
+  position: relative;
+  z-index: 1;
 }
 
 .hero {
