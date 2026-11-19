@@ -6,7 +6,8 @@
   padding-bottom: clamp(4rem, 10vw, 8rem);
 }
 
-.selected-game--enabled > .container { padding-inline: max(var(--gutter), 80px); }
+.selected-game--enabled > .container { padding-inline: max(var(--gutter), 128px); }
+.selected-game--enabled .project-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
 
 .selected-game__layer {
   position: absolute;
@@ -38,6 +39,15 @@
 .selected-game__ball[data-state="flying"] { pointer-events: none; }
 .selected-game__ball:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
-.selected-game__target { position: absolute; top: 0; left: 0; width: 38px; height: 38px; }
+.selected-game__target { position: absolute; top: 0; left: 0; width: 114px; height: 114px; overflow: visible; }
+.selected-game__target g { transform-origin: 19px 19px; }
 .selected-game__target circle { fill: var(--bg); stroke: var(--accent); stroke-width: 1.5; }
 .selected-game__target circle:last-child { fill: var(--accent); }
+
+.selected-game__trail, .selected-game__shockwave, .selected-game__spark {
+  position: absolute;
+  pointer-events: none;
+}
+.selected-game__trail { height: 1.5px; background: var(--accent); transform-origin: left center; }
+.selected-game__shockwave { border: 1.5px solid var(--accent); border-radius: 50%; }
+.selected-game__spark { border-radius: 50%; background: var(--accent); }
