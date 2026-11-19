@@ -36,6 +36,8 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
     const effects = new Set<HTMLElement>();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let growAnimation: Animation | undefined;
+    let ballGrowAnimation: Animation | undefined;
+    const ballCore = ball.querySelector('.selected-game__ball-core');
     const effect = (className: string, atX: number, atY: number, frames: Keyframe[], duration: number, size?: number) => {
       const node = document.createElement('span');
       node.className = className;
@@ -70,6 +72,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       for (const node of effects) { node.getAnimations().forEach(animation => animation.cancel()); node.remove(); }
       effects.clear();
       growAnimation?.cancel();
+      ballGrowAnimation?.cancel();
     };
     const lines = Array.from(ropes.querySelectorAll('line'));
     const handle = ropes.querySelector('path');
@@ -83,7 +86,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       const pullLength = Math.hypot(pullX, pullY);
       const aiming = pointer !== null && pullX >= 5;
       aim?.setAttribute('visibility', aiming ? 'visible' : 'hidden');
-      if (aiming) aim?.setAttribute('d', `M ${x} ${y} l ${pullX / pullLength * 150} ${pullY / pullLength * 150}`);
+      if (aiming) aim?.setAttribute('d', `M ${x} ${y} l ${pullX / pullLength * 300} ${pullY / pullLength * 300}`);
       lines.forEach((line, i) => {
         line.setAttribute('x1', String(anchorX + 14));
         line.setAttribute('y1', String(anchorY + (i ? 25 : -25)));
@@ -105,7 +108,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
         { transform: 'scale(1)', opacity: 1 },
       ], { duration: reducedMotion.matches ? 100 : 400, easing: 'ease-out' });
     };
-    const reset = () => {
+    const reset = (respawn = false) => {
       cancelAnimationFrame(frame);
       frame = 0;
       lastTime = 0;
@@ -115,6 +118,12 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       x = anchorX;
       y = anchorY;
       paint();
+      ballGrowAnimation?.cancel();
+      if (respawn) ballGrowAnimation = ballCore?.animate([
+        { transform: 'scale(0)', opacity: 0 },
+        { transform: 'scale(1.15)', opacity: 1, offset: 0.75 },
+        { transform: 'scale(1)', opacity: 1 },
+      ], { duration: reducedMotion.matches ? 100 : 350, easing: 'ease-out' });
       if (active && targetSpeed > 0) start();
     };
     function start() { if (active && !frame) frame = requestAnimationFrame(tick); }
@@ -145,16 +154,26 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
         burst(targetX, targetY, true);
         onHit();
         placeTarget();
-        reset();
+        reset(true);
+        return;
+      }
+      if (nextX > width || nextY < 0 || nextY > height) {
+        // Intersect the flight direction with the stage edge, even on a long frame.
+        const exitTime = Math.min((width - x) / vx, vy > 0 ? (height - y) / vy : vy < 0 ? -y / vy : Infinity);
+        const exitX = Math.max(16, Math.min(width - 16, x + vx * exitTime));
+        const exitY = Math.max(18, Math.min(height - 18, y + vy * exitTime));
+        effect('selected-game__death', exitX, exitY, [
+          { transform: 'translate(-50%, -50%) scale(0.4)', opacity: 0 },
+          { transform: 'translate(-50%, -50%) scale(1.15)', opacity: 1, offset: 0.2 },
+          { transform: 'translate(-50%, -90%) scale(1)', opacity: 1, offset: 0.55 },
+          { transform: 'translate(-50%, -140%) scale(0.8)', opacity: 0 },
+        ], 750);
+        onMiss();
+        reset(true);
         return;
       }
       x = nextX;
       y = nextY;
-      if (x > width + BALL_RADIUS || y < -BALL_RADIUS || y > height + BALL_RADIUS) {
-        onMiss();
-        reset();
-        return;
-      }
       paint();
       start();
     };
@@ -167,6 +186,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       vx = pullX / length * speed;
       vy = pullY / length * speed;
       flying = true;
+      ballGrowAnimation?.cancel();
       burst(x, y, false);
       lines.forEach(line => line.animate([{ strokeWidth: 3, opacity: 0.5 }, { strokeWidth: 1.5, opacity: 1 }], { duration: 250 }));
       pointer = null;
@@ -283,7 +303,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
         <svg ref={targetRef} className="selected-game__target" viewBox="0 0 38 38" aria-hidden="true">
           <g><circle cx="19" cy="19" r="18" /><circle cx="19" cy="19" r="11" /><circle cx="19" cy="19" r="2" /></g>
         </svg>
-        <button ref={ballRef} type="button" className="selected-game__ball" aria-label="Slingshot: drag left and release to shoot" title="Drag left to aim, then release. Keyboard: arrows to aim, Space to shoot." />
+        <button ref={ballRef} type="button" className="selected-game__ball" aria-label="Slingshot: drag left and release to shoot" title="Drag left to aim, then release. Keyboard: arrows to aim, Space to shoot."><span className="selected-game__ball-core" /></button>
       </div>}
     </div>
   );
