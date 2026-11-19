@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { ballTouchesSpike, ballTouchesSquare, spikeLimit } from '../lib/ballGame';
+import { ballTouchesSpike, ballTouchesSquare, layoutBottomWithin, spikeLimit } from '../lib/ballGame';
 import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
@@ -9,7 +9,7 @@ const SPIKE_HEIGHT = 20;
 
 type Pickup = { element: HTMLSpanElement; x: number; altitude: number; speed: number; landed: number | null };
 type Pop = { element: HTMLSpanElement; age: number };
-type Spike = { element: HTMLSpanElement; x: number };
+type Spike = { element: HTMLSpanElement; x: number; speed: number };
 type Particle = { element: HTMLSpanElement; x: number; altitude: number; vx: number; vy: number; age: number };
 type Props = {
   children: ReactNode;
@@ -88,8 +88,9 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
         x = clampX(x + vx * dt);
       }
       // Holding sustains the ascent; releasing makes the ball fall sooner.
-      vy -= (held && vy > 0 ? 1000 : 2200) * dt;
-      altitude += vy * dt;
+      const gravity = held && vy > 0 ? 1000 : 2200;
+      altitude += vy * dt - 0.5 * gravity * dt * dt;
+      vy -= gravity * dt;
       const ceiling = maxAltitude;
       if (altitude > ceiling) {
         altitude = ceiling;
@@ -165,14 +166,19 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           element.className = 'game-spike';
           element.setAttribute('aria-hidden', 'true');
           foreground.append(element);
-          spikes.push({ element, x: width + SPIKE_WIDTH / 2 });
+          const previousSpeed = spikes.at(-1)?.speed ?? 160;
+          const sampledSpeed = 100 + Math.random() * 140;
+          const speed = Math.abs(sampledSpeed - previousSpeed) < 25
+            ? (sampledSpeed < 170 ? sampledSpeed + 45 : sampledSpeed - 45)
+            : sampledSpeed;
+          spikes.push({ element, x: width + SPIKE_WIDTH / 2, speed });
           untilSpike = 2.2 + Math.random() * 1.2;
         }
       } else untilSpike = 1.8;
 
       for (let i = spikes.length - 1; i >= 0; i--) {
         const spike = spikes[i];
-        spike.x -= 145 * dt;
+        spike.x -= spike.speed * dt;
         spike.element.style.transform = `translate3d(${spike.x - SPIKE_WIDTH / 2}px, ${height - SPIKE_HEIGHT}px, 0)`;
         if (spike.x < -SPIKE_WIDTH) {
           spike.element.remove();
@@ -224,6 +230,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     const jump = () => {
       // Jump only from the ground: repeated clicks cannot escape the play area.
       if (respawnLeft > 0 || altitude > 0.5) return;
+      measure();
       vy = Math.sqrt(2 * 1000 * maxAltitude);
       start();
     };
@@ -258,20 +265,22 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       event.preventDefault();
       release();
     };
-    const resize = new ResizeObserver(() => {
+    const measure = () => {
       width = area.clientWidth;
       height = area.clientHeight;
       homeHeight = home.clientHeight;
       x = clampX(x);
       targetX = clampX(targetX);
-      const cards = Array.from(area.querySelectorAll('.project-card'));
-      const cardsBottom = Math.max(...cards.map(card => card.getBoundingClientRect().bottom));
+      const cards = Array.from(area.querySelectorAll<HTMLElement>('.project-card'));
+      const cardsBottom = Math.max(...cards.map(card => layoutBottomWithin(card, area)));
       // The top of the stretched ball stops just below the lowest card edge.
-      maxAltitude = cards.length ? Math.max(0, area.getBoundingClientRect().bottom - cardsBottom - RADIUS * 2 * 1.12 - 4) : 0;
+      maxAltitude = cards.length ? Math.max(0, height - cardsBottom - RADIUS * 2 * 1.12 - 4) : 0;
       altitude = Math.min(altitude, maxAltitude);
       pickups.forEach(pickup => { pickup.x = Math.min(width - SQUARE_SIZE, pickup.x); });
       paint();
-    });
+    };
+    measure();
+    const resize = new ResizeObserver(measure);
     resize.observe(area);
     resize.observe(home);
     const grid = area.querySelector('.project-grid');

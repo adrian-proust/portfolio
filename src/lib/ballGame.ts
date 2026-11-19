@@ -9,7 +9,16 @@ export function ballTouchesSquare(
 }
 
 export function spikeLimit(score: number) {
-  return score < 5 ? 0 : Math.max(1, Math.floor(score / 10));
+  return score < 3 ? 0 : 1 + Math.floor((score - 3) / 4);
+}
+
+/** Layout coordinates ignore reveal/hover transforms, unlike bounding rectangles. */
+export function layoutBottomWithin(element: HTMLElement, ancestor: HTMLElement) {
+  let bottom = element.offsetHeight;
+  for (let node: HTMLElement | null = element; node && node !== ancestor; node = node.offsetParent as HTMLElement | null) {
+    bottom += node.offsetTop;
+  }
+  return bottom;
 }
 
 /** Test the actual triangle against the ball's current ellipse. */
