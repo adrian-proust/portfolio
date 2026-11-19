@@ -19,6 +19,7 @@
 
 .selected-game__ropes { position: absolute; inset: 0; width: 100%; height: 100%; }
 .selected-game__ropes line { stroke: #fff; stroke-width: 1.5; }
+.selected-game__handle { fill: none; stroke: #8d8a80; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 
 .selected-game__ball {
   position: absolute;
@@ -39,9 +40,9 @@
 .selected-game__ball[data-state="flying"] { pointer-events: none; }
 .selected-game__ball:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
-.selected-game__target { position: absolute; top: 0; left: 0; width: 114px; height: 114px; overflow: visible; }
+.selected-game__target { position: absolute; top: 0; left: 0; width: 171px; height: 171px; overflow: visible; }
 .selected-game__target g { transform-origin: 19px 19px; }
-.selected-game__target circle { fill: var(--bg); stroke: var(--accent); stroke-width: 1.5; }
+.selected-game__target circle { fill: var(--bg); stroke: var(--accent); stroke-width: 0.4; }
 .selected-game__target circle:last-child { fill: var(--accent); }
 
 .selected-game__trail, .selected-game__shockwave, .selected-game__spark {

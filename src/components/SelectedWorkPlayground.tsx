@@ -3,10 +3,10 @@ import { segmentHitsCircle } from '../lib/slingshotGame';
 import './SelectedWorkPlayground.css';
 
 const BALL_RADIUS = 12;
-const TARGET_RADIUS = 57;
+const TARGET_RADIUS = 85.5;
 
-export default function SelectedWorkPlayground({ children, enabled, onHit }: {
-  children: ReactNode; enabled: boolean; onHit: () => void;
+export default function SelectedWorkPlayground({ children, enabled, onHit, onMiss }: {
+  children: ReactNode; enabled: boolean; onHit: () => void; onMiss: () => void;
 }) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
@@ -64,10 +64,12 @@ export default function SelectedWorkPlayground({ children, enabled, onHit }: {
       growAnimation?.cancel();
     };
     const lines = Array.from(ropes.querySelectorAll('line'));
+    const handle = ropes.querySelector('path');
     const paint = () => {
       ball.style.transform = `translate3d(${x - BALL_RADIUS}px, ${y - BALL_RADIUS}px, 0)`;
       target.style.transform = `translate3d(${targetX - TARGET_RADIUS}px, ${targetY - TARGET_RADIUS}px, 0)`;
       ball.dataset.state = flying ? 'flying' : pointer === null ? 'ready' : 'dragging';
+      handle?.setAttribute('d', `M ${anchorX - 44} ${anchorY} L ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY - 25} M ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY + 25}`);
       lines.forEach((line, i) => {
         line.setAttribute('x1', String(anchorX + 14));
         line.setAttribute('y1', String(anchorY + (i ? 25 : -25)));
@@ -123,6 +125,7 @@ export default function SelectedWorkPlayground({ children, enabled, onHit }: {
       x = nextX;
       y = nextY;
       if (x > width + BALL_RADIUS || y < -BALL_RADIUS || y > height + BALL_RADIUS) {
+        onMiss();
         reset();
         return;
       }
@@ -222,15 +225,15 @@ export default function SelectedWorkPlayground({ children, enabled, onHit }: {
       window.removeEventListener('blur', pause);
       pause();
     };
-  }, [enabled, onHit]);
+  }, [enabled, onHit, onMiss]);
 
   return (
     <div className={`selected-game${enabled ? ' selected-game--enabled' : ''}`} ref={areaRef}>
       {children}
       {enabled && <div className="selected-game__layer">
-        <svg ref={ropesRef} className="selected-game__ropes" aria-hidden="true"><line /><line /></svg>
+        <svg ref={ropesRef} className="selected-game__ropes" aria-hidden="true"><path className="selected-game__handle" /><line /><line /></svg>
         <svg ref={targetRef} className="selected-game__target" viewBox="0 0 38 38" aria-hidden="true">
-          <g><circle cx="19" cy="19" r="18" /><circle cx="19" cy="19" r="11" /><circle cx="19" cy="19" r="4" /></g>
+          <g><circle cx="19" cy="19" r="18" /><circle cx="19" cy="19" r="11" /><circle cx="19" cy="19" r="2" /></g>
         </svg>
         <button ref={ballRef} type="button" className="selected-game__ball" aria-label="Slingshot: drag left and release to shoot" title="Drag left to aim, then release. Keyboard: arrows to aim, Space to shoot." />
       </div>}
