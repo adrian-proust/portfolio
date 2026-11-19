@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react';
 import type { Project, SectionId } from '../data/types';
 import { homeProjects, profile, projects, RECENT_PROJECTS_COUNT } from '../data/portfolio';
 import ProjectCard from './ProjectCard';
+import LatestProjectsPlayground from './LatestProjectsPlayground';
 import './Hero.css';
 
 type Props = {
@@ -49,7 +50,9 @@ export default function Hero({ onNavigate, onSelectProject }: Props) {
             See all projects →
           </a>
         </div>
-        <div className="recent__group">
+      </div>
+      <LatestProjectsPlayground>
+        <div className="container recent__group">
           <div className="recent__group-header reveal">
             <h2 className="display-md">{homeProjects.title}</h2>
           </div>
@@ -64,8 +67,7 @@ export default function Hero({ onNavigate, onSelectProject }: Props) {
             ))}
           </div>
         </div>
-      </div>
-
+      </LatestProjectsPlayground>
     </section>
   );
 }

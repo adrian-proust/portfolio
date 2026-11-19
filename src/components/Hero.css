@@ -1,5 +1,6 @@
-.hero-section {
+.hero-section.section {
   padding-top: var(--nav-h);
+  padding-bottom: 0;
 }
 
 .hero {
@@ -193,10 +194,6 @@
 .hero__scroll--inline {
   position: static;
   margin-top: 0.75rem;
-}
-
-.recent__group {
-  margin-top: clamp(2rem, 5vw, 3.5rem);
 }
 
 .recent__group-header {

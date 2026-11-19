@@ -1,4 +1,5 @@
 import { contact, profile } from '../data/portfolio';
+import MarqueeBanner from './MarqueeBanner';
 import './Contact.css';
 
 export default function Contact() {
@@ -9,6 +10,7 @@ export default function Contact() {
 
   return (
     <footer className="contact">
+      <MarqueeBanner text="Contact" />
       <div className="container">
         <p className="label reveal">Contact</p>
         <h2 className="contact__title reveal">
