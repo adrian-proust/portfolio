@@ -40,6 +40,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
     let ballGrowAnimation: Animation | undefined;
     const ballCore = ball.querySelector('.selected-game__ball-core');
     const dragHint = ball.querySelector<HTMLElement>('.selected-game__drag-hint');
+    const hintRings = ball.querySelector<HTMLElement>('.selected-game__hint-rings');
     const effect = (className: string, atX: number, atY: number, frames: Keyframe[], duration: number, size?: number) => {
       const node = document.createElement('span');
       node.className = className;
@@ -185,6 +186,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       if (pullX < 5) { reset(); return; }
       hasLaunchedRef.current = true;
       if (dragHint) dragHint.hidden = true;
+      if (hintRings) hintRings.hidden = true;
       const length = Math.hypot(pullX, pullY);
       const speed = Math.min(1500, 650 + length * 6);
       vx = pullX / length * speed;
@@ -307,7 +309,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
         <svg ref={targetRef} className="selected-game__target" viewBox="0 0 38 38" aria-hidden="true">
           <g><circle cx="19" cy="19" r="18" /><circle cx="19" cy="19" r="11" /><circle cx="19" cy="19" r="2" /></g>
         </svg>
-        <button ref={ballRef} type="button" className="selected-game__ball" aria-label="Slingshot: drag left and release to shoot" title="Drag left to aim, then release. Keyboard: arrows to aim, Space to shoot."><span className="selected-game__ball-core" /><span className="selected-game__drag-hint" hidden={hasLaunchedRef.current} aria-hidden="true">drag me</span></button>
+        <button ref={ballRef} type="button" className="selected-game__ball" aria-label="Slingshot: drag left and release to shoot" title="Drag left to aim, then release. Keyboard: arrows to aim, Space to shoot."><span className="selected-game__hint-rings" hidden={hasLaunchedRef.current} aria-hidden="true" /><span className="selected-game__ball-core" /><span className="selected-game__drag-hint" hidden={hasLaunchedRef.current} aria-hidden="true">drag me</span></button>
       </div>}
     </div>
   );
