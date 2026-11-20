@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="990" viewBox="0 0 1440 990">
+  <rect width="1440" height="990" fill="#0d1012"/>
+  <g fill="none" stroke="#ff5a1a" stroke-width="2" opacity=".35">
+    <circle cx="720" cy="420" r="180"/><circle cx="720" cy="420" r="120"/>
+    <path d="M480 420h480M720 180v480"/>
+  </g>
+  <text x="720" y="735" text-anchor="middle" fill="#f2efe6" font-family="Arial,sans-serif" font-size="44" letter-spacing="8">WONKY DIVER</text>
+  <text x="720" y="790" text-anchor="middle" fill="#999" font-family="monospace" font-size="20" letter-spacing="4">DESIGN PREVIEW COMING SOON</text>
+</svg>

@@ -33,7 +33,7 @@ export default function App() {
           <>
             <Hero onNavigate={navigate} onSelectProject={handleSelectProject} />
             <Projects onSelectProject={handleSelectProject} />
-            <About />
+            <About onSelectProject={handleSelectProject} />
           </>
         )}
       </main>

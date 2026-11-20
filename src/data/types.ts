@@ -1,5 +1,13 @@
 export type ProjectCategory = 'Professional' | 'Student' | 'Personal';
 
+export type DesignShowcaseItem = {
+  projectId: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+};
+
 export type Presentation = { title: string; embedUrl: string; url: string; description?: string };
 
 export type Project = {

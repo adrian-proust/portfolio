@@ -4,9 +4,11 @@ import SectionLabel from './SectionLabel';
 import Skills from './Skills';
 import Education from './Education';
 import Contact from './Contact';
+import DesignShowcase from './DesignShowcase';
+import type { Project } from '../data/types';
 import './About.css';
 
-export default function About() {
+export default function About({ onSelectProject }: { onSelectProject: (project: Project) => void }) {
   return (
     <section id="AboutMe" className="section">
       <MarqueeBanner text="About me" reverse />
@@ -22,6 +24,7 @@ export default function About() {
             ))}
           </div>
         </div>
+        <DesignShowcase onSelectProject={onSelectProject} />
         <Skills />
         <Education />
       </div>

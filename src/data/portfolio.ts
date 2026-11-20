@@ -1,6 +1,7 @@
 // All site content lives here. Edit these objects to update the portfolio —
 // components render them with .map(), so no markup changes are needed.
 import type {
+  DesignShowcaseItem,
   Education,
   Experience,
   NavSection,
@@ -10,6 +11,30 @@ import type {
   Skill,
   SocialLink,
 } from './types';
+
+export const designShowcase: DesignShowcaseItem[] = [
+  {
+    projectId: 'sang-pourcent',
+    title: 'Sang% — Resource economy',
+    description: 'An animated Machinations diagram simulating the resources in the gameplay loop.',
+    image: '/showcase/sang-machinations.gif',
+    imageAlt: 'Animated Machinations diagram of the Sang% resource economy',
+  },
+  {
+    projectId: 'hansel-gretel',
+    title: 'Hansel & Gretel GO — One Page Design',
+    description: 'The Silent tile: a one-page design explaining its rules, stealth interactions and impact on the witch’s behaviour.',
+    image: '/showcase/hansel-gretel-one-page.png',
+    imageAlt: 'First slide of One Page Designs: the Silent tile mechanic for Hansel & Gretel GO',
+  },
+  {
+    projectId: 'wonky-diver',
+    title: 'Wonky Diver — Game & systems design',
+    description: 'Design preview coming soon. Explore the project to discover the gameplay systems and my contribution.',
+    image: '/showcase/wonky-diver-placeholder.svg',
+    imageAlt: 'Wonky Diver design preview placeholder',
+  },
+];
 
 export const sections: NavSection[] = [
   { id: 'Home', label: 'Home' },
