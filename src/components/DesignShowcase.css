@@ -10,6 +10,16 @@
 .design-showcase__caption h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); }
 .design-showcase__caption p { color: var(--muted); max-width: 80ch; }
 .design-showcase__caption a { justify-self: start; }
+.design-showcase__image { animation: showcase-image-in 450ms var(--ease) both; }
+.design-showcase__caption-content { display: grid; gap: 0.75rem; animation: showcase-caption-in 450ms var(--ease) both; }
+@keyframes showcase-image-in {
+  from { opacity: 0; transform: translateX(var(--showcase-offset)) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes showcase-caption-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
 @media (max-width: 600px) {
   .design-showcase__viewer { grid-template-columns: 44px 1fr 44px; gap: 0.5rem; }
   .design-showcase__image { grid-column: 1 / -1; grid-row: 1; }
