@@ -40,6 +40,10 @@ export const gameUpgrades = [
 ];
 
 export const gameResetLabel = 'Reset upgrades & high scores';
+export const upgradeNotice = {
+  message: 'Need a little help? You’ll find upgrades inside my projects for the mini-games!',
+  closeLabel: 'Close upgrade tip',
+};
 
 export const sections: NavSection[] = [
   { id: 'Home', label: 'Home' },

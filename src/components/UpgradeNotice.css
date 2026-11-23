@@ -1,0 +1,31 @@
+.upgrade-notice {
+  position: fixed;
+  z-index: 80;
+  left: 1rem;
+  top: 50%;
+  width: min(260px, calc(100vw - 2rem));
+  padding: 1.5rem 2.3rem 1.5rem 1.25rem;
+  border: 1px solid #17172b;
+  border-radius: 14px;
+  background: #6369D1;
+  color: #09090b;
+  box-shadow: 0 10px 28px #0005, 0 0 18px #6369D126;
+  transform: translateY(-50%);
+  animation: upgrade-notice-in 550ms cubic-bezier(.2,.8,.25,1.2) both;
+}
+.upgrade-notice p { font-size: 0.95rem; line-height: 1.5; font-weight: 600; }
+.upgrade-notice button { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; padding: 0; border: 0; background: transparent; color: inherit; font-size: 1.5rem; cursor: pointer; }
+.upgrade-notice button:focus-visible { outline: 2px solid #09090b; border-radius: 50%; }
+.upgrade-notice--closing { pointer-events: none; animation: upgrade-notice-out 280ms ease-in both; }
+@keyframes upgrade-notice-in {
+  0% { opacity: 0; transform: translate(-110%, -50%) scale(.8) rotate(-6deg); }
+  70% { opacity: 1; transform: translate(8px, -50%) scale(1.03) rotate(1deg); }
+  100% { opacity: 1; transform: translate(0, -50%) scale(1) rotate(0); }
+}
+@keyframes upgrade-notice-out {
+  to { opacity: 0; transform: translate(-60px, -45%) scale(.85) rotate(-4deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes upgrade-notice-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes upgrade-notice-out { to { opacity: 0; } }
+}

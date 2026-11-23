@@ -14,7 +14,22 @@
 }
 .project-card__main { display: flex; flex: 1; flex-direction: column; border-radius: inherit; }
 .project-card__main:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.project-card__upgrade-icon { display: inline-flex; color: #6369D1; }
+.project-card__upgrade-icon { position: relative; display: inline-flex; color: #6369D1; border: 1px solid #6369D1; border-radius: 7px; padding: 3px; isolation: isolate; }
+.project-card__upgrade-icon::before, .project-card__upgrade-icon::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(from var(--card-glow-angle), #6369D1, #b6baff, #6369D1, #484ca2, #6369D1);
+  opacity: 0;
+  pointer-events: none;
+}
+.project-card__upgrade-icon::before { filter: blur(9px); }
+.project-card__upgrade-icon::after { padding: 1px; mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; }
+.upgrades-announced .project-card__upgrade-icon::before { opacity: .3; }
+.upgrades-announced .project-card__upgrade-icon::after { opacity: .7; }
+.upgrades-announced .project-card__upgrade-icon::before, .upgrades-announced .project-card__upgrade-icon::after { animation: project-card-glow 3.5s linear infinite; }
 @media (max-width: 860px), (hover: none), (pointer: coarse) { .project-card__upgrade-icon { display: none; } }
 
 @property --card-glow-angle {

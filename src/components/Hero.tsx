@@ -11,16 +11,17 @@ import './Hero.css';
 type Props = {
   onNavigate: (id: SectionId) => void;
   onSelectProject?: (project: Project) => void;
+  onDefeat: () => void;
 };
 
-export default function Hero({ onSelectProject }: Props) {
+export default function Hero({ onSelectProject, onDefeat }: Props) {
   const latestProjects = projects.slice(0, RECENT_PROJECTS_COUNT);
   const enabled = useMiniGamesEnabled();
   const { unlocked } = useGameUpgrades();
   const [score, setScore] = useState(0);
   const effectsRef = useRef<HTMLDivElement>(null);
   const collect = useCallback(() => setScore(value => value + 1), []);
-  const resetScore = useCallback(() => setScore(0), []);
+  const resetScore = useCallback(() => { setScore(0); onDefeat(); }, [onDefeat]);
 
   return (
     <section id="Home" className="section hero-section">
