@@ -239,7 +239,7 @@ export default function ProjectDetail({ project, onBack }: Props) {
           )}
         </section>
 
-        {enabled && upgradesDiscovered && upgrade && <UpgradeChest key={upgrade.id} upgrade={upgrade} unlocked={unlocked.includes(upgrade.id)} onUnlock={() => unlock(upgrade.id)} />}
+        {enabled && upgradesDiscovered && upgrade && <div className="project-detail__reward"><UpgradeChest key={upgrade.id} upgrade={upgrade} unlocked={unlocked.includes(upgrade.id)} onUnlock={() => unlock(upgrade.id)} /></div>}
         <footer className="project-detail__footer">
           <button type="button" className="button button--ghost" onClick={onBack}>
             ← Back to all projects
