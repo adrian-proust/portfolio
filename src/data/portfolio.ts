@@ -37,6 +37,7 @@ export const designShowcase: DesignShowcaseItem[] = [
 
 export const gameUpgrades = [
   { id: 'double-jump' as const, projectId: 'wonky-diver', label: 'Double jump', description: 'Click again in the air to jump a second time.' },
+  { id: 'pickup-boost' as const, projectId: 'my-lil-pot-utah', label: 'Pickup boost', description: 'Pickups appear in front of project cards and stay on the ground 50% longer.' },
 ];
 
 export const gameResetLabel = 'Reset upgrades & high scores';
@@ -138,7 +139,7 @@ export const projects: Project[] = [
     title: 'Wonky Diver',
     duration: '2026',
     role: 'Game designer',
-    tags: ['Unreal Engine', 'Demo', 'Exploration', 'Adventure', 'Underwater', 'Creature Interactions'],
+    tags: ['Unreal Engine', 'Demo', 'Exploration', 'Creature Interactions'],
     category: 'Professional',
     description: 'Explore a hostile alien ocean as a barely qualified diver. Study strange creatures, gather resources, and upgrade your gear to reach deeper biomes and uncover new paths.',
     image: '/projects/wonky-diver-cover.png',

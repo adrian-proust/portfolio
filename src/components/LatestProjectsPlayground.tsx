@@ -24,9 +24,10 @@ type Props = {
   onLose: () => void;
   score: number;
   doubleJump: boolean;
+  pickupBoost: boolean;
 };
 
-export default function LatestProjectsPlayground({ children, enabled, effectsRef, score, onCollect, onLose, doubleJump }: Props) {
+export default function LatestProjectsPlayground({ children, enabled, effectsRef, score, onCollect, onLose, doubleJump, pickupBoost }: Props) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
   const hintRef = useRef<HTMLSpanElement>(null);
@@ -34,6 +35,8 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
   const jumpRef = useRef<() => void>(() => {});
   const scoreRef = useRef(score);
   const doubleJumpRef = useRef(doubleJump);
+  const pickupBoostRef = useRef(pickupBoost);
+  useEffect(() => { pickupBoostRef.current = pickupBoost; }, [pickupBoost]);
   useEffect(() => { doubleJumpRef.current = doubleJump; }, [doubleJump]);
   useEffect(() => { scoreRef.current = score; }, [score]);
 
@@ -196,7 +199,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           pickups.splice(i, 1);
           scoreRef.current += 1;
           onCollect();
-        } else if (pickup.landed !== null && pickup.landed >= 0.8) {
+        } else if (pickup.landed !== null && pickup.landed >= (pickupBoostRef.current ? 1.2 : 0.8)) {
           pickup.element.remove();
           pickups.splice(i, 1);
         }

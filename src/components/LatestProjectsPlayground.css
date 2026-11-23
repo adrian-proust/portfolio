@@ -13,6 +13,10 @@
   pointer-events: none;
   z-index: 0;
 }
+.home-game-effects--upgraded { z-index: 3; }
+.home-game-effects--upgraded .game-pickup::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: #6369D1; box-shadow: 0 0 6px #6369D188; }
+.home-game-effects--upgraded .game-pickup--landed { animation-duration: 1.2s; }
+.home-game-effects--upgraded .game-pickup-pop { border-color: #6369D1; }
 
 .game-pickup {
   position: absolute;

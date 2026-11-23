@@ -25,7 +25,7 @@ export default function Hero({ onSelectProject, onDefeat }: Props) {
 
   return (
     <section id="Home" className="section hero-section">
-      {enabled && <div className="home-game-effects" ref={effectsRef} aria-hidden="true" />}
+      {enabled && <div className={`home-game-effects${unlocked.includes('pickup-boost') ? ' home-game-effects--upgraded' : ''}`} ref={effectsRef} aria-hidden="true" />}
       <div className="container recent">
         <div className="recent__header reveal">
           <div className="recent__title-block">
@@ -44,7 +44,7 @@ export default function Hero({ onSelectProject, onDefeat }: Props) {
           {enabled && <GameScore score={score} game="ball" />}
         </div>
       </div>
-      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore} doubleJump={unlocked.includes('double-jump')}>
+      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore} doubleJump={unlocked.includes('double-jump')} pickupBoost={unlocked.includes('pickup-boost')}>
         <div className="container recent__group">
           <div className="recent__group-header reveal">
             <h2 className="display-md">{homeProjects.title}<span className="title-dot" aria-hidden="true" /></h2>
