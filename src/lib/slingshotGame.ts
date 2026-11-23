@@ -12,3 +12,6 @@ export function targetDifficulty(score: number) {
     speed: score < 4 ? 0 : 26 + Math.floor((score - 4) / 2) * 6,
   };
 }
+export function projectileSettings(giant: boolean, fast: boolean) {
+  return { radius: giant ? 36 : 12, speedMultiplier: fast ? 1.5 : 1, handleScale: giant ? 2.2 : 1 };
+}

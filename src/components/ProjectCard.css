@@ -14,7 +14,7 @@
 }
 .project-card__main { display: flex; flex: 1; flex-direction: column; border-radius: inherit; }
 .project-card__main:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.project-card__upgrade-icon { position: relative; display: inline-flex; color: #6369D1; border: 1px solid #6369D1; border-radius: 7px; padding: 3px; isolation: isolate; background: var(--bg-raised); animation: upgrade-icon-spawn 650ms cubic-bezier(.22, 1.3, .45, 1) both; }
+.project-card__upgrade-icon { position: relative; display: inline-flex; color: var(--upgrade-color, #6369D1); border: 1px solid var(--upgrade-color, #6369D1); border-radius: 7px; padding: 3px; isolation: isolate; background: var(--bg-raised); animation: upgrade-icon-spawn 650ms cubic-bezier(.22, 1.3, .45, 1) both; }
 .project-card__upgrade-icon svg { position: relative; z-index: 1; border-radius: 4px; background: var(--bg-raised); box-shadow: 0 0 0 3px var(--bg-raised); }
 @keyframes upgrade-icon-spawn {
   0% { opacity: 0; transform: scale(.15) rotate(-18deg); }
@@ -28,16 +28,16 @@
   inset: -2px;
   z-index: -1;
   border-radius: inherit;
-  background: conic-gradient(from var(--card-glow-angle), #6369D1, #b6baff, #6369D1, #484ca2, #6369D1);
+  background: conic-gradient(from var(--card-glow-angle), var(--upgrade-color, #6369D1), color-mix(in srgb, var(--upgrade-color, #6369D1) 45%, white), var(--upgrade-color, #6369D1), color-mix(in srgb, var(--upgrade-color, #6369D1) 75%, black), var(--upgrade-color, #6369D1));
   opacity: 0;
   pointer-events: none;
 }
 .project-card__upgrade-icon::before { filter: blur(9px); }
 .project-card__upgrade-icon::after { padding: 1px; mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; }
-.upgrades-announced .project-card__upgrade-icon::before { opacity: .8; }
-.upgrades-announced .project-card__upgrade-icon::after { opacity: 1; padding: 2px; }
-.upgrades-announced .project-card__upgrade-icon::before, .upgrades-announced .project-card__upgrade-icon::after { animation: project-card-glow 3.5s linear infinite; }
-.upgrades-announced .project-card__upgrade-icon svg { background-image: linear-gradient(110deg, transparent 35%, #b6baff88 50%, transparent 65%); background-size: 300% 100%; animation: upgrade-icon-shine 2.8s ease-in-out infinite; }
+.project-card__upgrade-icon.is-highlighted::before { opacity: .8; }
+.project-card__upgrade-icon.is-highlighted::after { opacity: 1; padding: 2px; }
+.project-card__upgrade-icon.is-highlighted::before, .project-card__upgrade-icon.is-highlighted::after { animation: project-card-glow 3.5s linear infinite; }
+.project-card__upgrade-icon.is-highlighted svg { background-image: linear-gradient(110deg, transparent 35%, color-mix(in srgb, var(--upgrade-color, #6369D1) 45%, white) 50%, transparent 65%); background-size: 300% 100%; animation: upgrade-icon-shine 2.8s ease-in-out infinite; }
 @keyframes upgrade-icon-shine { 0%, 15% { background-position: 150% 0; } 70%, 100% { background-position: -50% 0; } }
 @media (max-width: 860px), (hover: none), (pointer: coarse) { .project-card__upgrade-icon { display: none; } }
 

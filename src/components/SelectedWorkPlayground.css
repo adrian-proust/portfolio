@@ -101,3 +101,12 @@
 @keyframes aim-dashes { to { stroke-dashoffset: -28.02; } }
 @media (prefers-reduced-motion: reduce) { .selected-game__aim, .selected-game__drag-hint { animation: none; } }
 @media (prefers-reduced-motion: reduce) { .selected-game__hint-rings { display: none; } }
+.selected-game--giant .selected-game__ball { width: 72px; height: 72px; }
+.selected-game--giant .selected-game__ball-core { background: radial-gradient(circle at center, var(--accent) 0 12px, #9A275A 12px); }
+.selected-game--giant .selected-game__handle { stroke-width: 9; }
+.selected-game--fast .selected-game__trail { height: 3px; background: #9A275A; box-shadow: 0 0 8px #9A275Aaa; }
+.selected-game__speed-spark { position: absolute; border-radius: 50%; background: #9A275A; box-shadow: 0 0 6px #9A275A; pointer-events: none; }
+.selected-game--fast .selected-game__shockwave { border-color: #9A275A; }
+.selected-game--fast .selected-game__spark { background: #9A275A; }
+.selected-game--giant .selected-game__shockwave { border-color: #9A275A; }
+.selected-game--giant .selected-game__spark { background: #9A275A; }

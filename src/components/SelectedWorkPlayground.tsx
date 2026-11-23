@@ -1,11 +1,9 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { segmentHitsCircle, targetDifficulty } from '../lib/slingshotGame';
+import { segmentHitsCircle, targetDifficulty, projectileSettings } from '../lib/slingshotGame';
 import './SelectedWorkPlayground.css';
 
-const BALL_RADIUS = 12;
-
-export default function SelectedWorkPlayground({ children, enabled, score, onHit, onMiss }: {
-  children: ReactNode; enabled: boolean; score: number; onHit: () => void; onMiss: () => void;
+export default function SelectedWorkPlayground({ children, enabled, score, onHit, onMiss, giant, fast }: {
+  children: ReactNode; enabled: boolean; score: number; onHit: () => void; onMiss: (score: number) => void; giant: boolean; fast: boolean;
 }) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
@@ -23,6 +21,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
     const ropes = ropesRef.current;
     const content = area?.querySelector<HTMLElement>('.projects__playground');
     if (!enabled || !area || !ball || !target || !ropes || !content) return;
+    const { radius: projectileRadius, speedMultiplier, handleScale } = projectileSettings(giant, fast);
     let width = 0, height = 0, anchorX = 0, anchorY = 0;
     let x = 0, y = 0, targetX = 0, targetY = 0;
     let vx = 0, vy = 0, frame = 0, lastTime = 0;
@@ -81,18 +80,18 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
     const handle = ropes.querySelector('path');
     const aim = ropes.querySelector<SVGPathElement>('.selected-game__aim');
     const paint = () => {
-      ball.style.transform = `translate3d(${x - BALL_RADIUS}px, ${y - BALL_RADIUS}px, 0)`;
+      ball.style.transform = `translate3d(${x - projectileRadius}px, ${y - projectileRadius}px, 0)`;
       target.style.transform = `translate3d(${targetX - radius}px, ${targetY - radius}px, 0)`;
       ball.dataset.state = flying ? 'flying' : pointer === null ? 'ready' : 'dragging';
-      handle?.setAttribute('d', `M 0 ${anchorY} L ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY - 25} M ${anchorX - 10} ${anchorY} L ${anchorX + 14} ${anchorY + 25}`);
+      handle?.setAttribute('d', `M 0 ${anchorY} L ${anchorX - 10 * handleScale} ${anchorY} L ${anchorX + 14 * handleScale} ${anchorY - 25 * handleScale} M ${anchorX - 10 * handleScale} ${anchorY} L ${anchorX + 14 * handleScale} ${anchorY + 25 * handleScale}`);
       const pullX = anchorX - x, pullY = anchorY - y;
       const pullLength = Math.hypot(pullX, pullY);
       const aiming = pointer !== null && pullX >= 5;
       aim?.setAttribute('visibility', aiming ? 'visible' : 'hidden');
       if (aiming) aim?.setAttribute('d', `M ${x} ${y} l ${pullX / pullLength * 300} ${pullY / pullLength * 300}`);
       lines.forEach((line, i) => {
-        line.setAttribute('x1', String(anchorX + 14));
-        line.setAttribute('y1', String(anchorY + (i ? 25 : -25)));
+        line.setAttribute('x1', String(anchorX + 14 * handleScale));
+        line.setAttribute('y1', String(anchorY + (i ? 25 : -25) * handleScale));
         line.setAttribute('x2', String(flying ? anchorX : x));
         line.setAttribute('y2', String(flying ? anchorY : y));
       });
@@ -149,11 +148,15 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       const nextY = y + vy * dt;
       if (!reducedMotion.matches) {
         const length = Math.hypot(nextX - x, nextY - y);
-        const trail = effect('selected-game__trail', x, y, [{ opacity: 0.7 }, { opacity: 0 }], 240);
+        const trail = effect('selected-game__trail', x, y, [{ opacity: fast ? 1 : 0.7 }, { opacity: 0 }], fast ? 320 : 240);
         trail.style.width = `${length + 2}px`;
         trail.style.transform = `rotate(${Math.atan2(nextY - y, nextX - x)}rad)`;
+        if (fast) effect('selected-game__speed-spark', x, y, [
+          { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.9 },
+          { transform: `translate(${(Math.random() - 0.5) * 22}px, ${(Math.random() - 0.5) * 22}px) scale(0)`, opacity: 0 },
+        ], 220, 3);
       }
-      if (segmentHitsCircle(x, y - previousTargetY, nextX, nextY - targetY, targetX, 0, BALL_RADIUS + radius)) {
+      if (segmentHitsCircle(x, y - previousTargetY, nextX, nextY - targetY, targetX, 0, projectileRadius + radius)) {
         burst(targetX, targetY, true);
         onHit();
         placeTarget();
@@ -171,7 +174,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
           { transform: 'translate(-50%, -90%) scale(1)', opacity: 1, offset: 0.55 },
           { transform: 'translate(-50%, -140%) scale(0.8)', opacity: 0 },
         ], 750);
-        onMiss();
+        onMiss(scoreRef.current);
         reset(true);
         return;
       }
@@ -188,7 +191,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       if (dragHint) dragHint.hidden = true;
       if (hintRings) hintRings.hidden = true;
       const length = Math.hypot(pullX, pullY);
-      const speed = Math.min(1500, 650 + length * 6);
+      const speed = Math.min(1500, 650 + length * 6) * speedMultiplier;
       vx = pullX / length * speed;
       vy = pullY / length * speed;
       flying = true;
@@ -203,8 +206,8 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
     const drag = (event: PointerEvent) => {
       if (event.pointerId !== pointer) return;
       const bounds = area.getBoundingClientRect();
-      x = Math.max(BALL_RADIUS, Math.min(anchorX, event.clientX - bounds.left));
-      y = Math.max(BALL_RADIUS, Math.min(height - BALL_RADIUS, Math.max(anchorY - 180, Math.min(anchorY + 180, event.clientY - bounds.top))));
+      x = Math.max(projectileRadius, Math.min(anchorX, event.clientX - bounds.left));
+      y = Math.max(projectileRadius, Math.min(height - projectileRadius, Math.max(anchorY - 180, Math.min(anchorY + 180, event.clientY - bounds.top))));
       paint();
     };
     const down = (event: PointerEvent) => {
@@ -225,12 +228,12 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       if (flying || pointer !== null) return;
       if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
         event.preventDefault();
-        x = Math.max(BALL_RADIUS, anchorX - 40);
+        x = Math.max(projectileRadius, anchorX - 40);
         y = Math.max(anchorY - 180, Math.min(anchorY + 180, y + (event.code === 'ArrowUp' ? 16 : -16)));
         paint();
       } else if ((event.code === 'Space' || event.code === 'Enter') && !event.repeat) {
         event.preventDefault();
-        x = Math.max(BALL_RADIUS, anchorX - 40);
+        x = Math.max(projectileRadius, anchorX - 40);
         fire();
       }
     };
@@ -299,10 +302,10 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       difficultyRef.current = () => {};
       pause();
     };
-  }, [enabled, onHit, onMiss]);
+  }, [enabled, onHit, onMiss, giant, fast]);
 
   return (
-    <div className={`selected-game${enabled ? ' selected-game--enabled' : ''}`} ref={areaRef}>
+    <div className={`selected-game${enabled ? ' selected-game--enabled' : ''}${giant ? ' selected-game--giant' : ''}${fast ? ' selected-game--fast' : ''}`} ref={areaRef}>
       {children}
       {enabled && <div className="selected-game__layer">
         <svg ref={ropesRef} className="selected-game__ropes" aria-hidden="true"><path className="selected-game__handle" /><line /><line /><path className="selected-game__aim" visibility="hidden" /></svg>

@@ -5,12 +5,12 @@
   top: 50%;
   width: min(260px, calc(100vw - 2rem));
   padding: 1.5rem 2.3rem 1.5rem 1.25rem;
-  border: 2px solid #b3b7ff;
+  border: 2px solid color-mix(in srgb, var(--upgrade-color, #6369D1) 50%, white);
   border-radius: 14px;
   overflow: hidden;
-  background: #6369D1;
+  background: var(--upgrade-color, #6369D1);
   color: #09090b;
-  box-shadow: 0 12px 32px #0007, 0 0 24px #6369D166;
+  box-shadow: 0 12px 32px #0007, 0 0 24px color-mix(in srgb, var(--upgrade-color, #6369D1) 40%, transparent);
   transform: translateY(-50%);
   animation: upgrade-notice-in 550ms cubic-bezier(.2,.8,.25,1.2) both;
 }

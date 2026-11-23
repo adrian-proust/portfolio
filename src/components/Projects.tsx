@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useGameUpgrades } from '../hooks/useGameUpgrades';
 import type { Project, ProjectCategory } from '../data/types';
 import { projectCategories, projects } from '../data/portfolio';
 import { useReveal } from '../hooks/useReveal';
@@ -13,13 +14,15 @@ const filters = projectCategories.map((category) => category.id);
 
 type Props = {
   onSelectProject?: (project: Project) => void;
+  onMiss: (score: number) => void;
 };
 
-export default function Projects({ onSelectProject }: Props) {
+export default function Projects({ onSelectProject, onMiss }: Props) {
+  const { unlocked } = useGameUpgrades();
   const miniGamesEnabled = useMiniGamesEnabled();
   const [gameScore, setGameScore] = useState(0);
   const hitTarget = useCallback(() => setGameScore(score => score + 1), []);
-  const missTarget = useCallback(() => setGameScore(0), []);
+  const missTarget = useCallback((score: number) => { setGameScore(0); onMiss(score); }, [onMiss]);
   const [filter, setFilter] = useState<ProjectCategory>(filters[0]);
   const visible = useMemo(
     () => projects.filter((p) => p.category === filter),
@@ -38,7 +41,7 @@ export default function Projects({ onSelectProject }: Props) {
       }}
     >
       <MarqueeBanner text="Projects" />
-      <SelectedWorkPlayground enabled={miniGamesEnabled} score={gameScore} onHit={hitTarget} onMiss={missTarget}>
+      <SelectedWorkPlayground enabled={miniGamesEnabled} score={gameScore} onHit={hitTarget} onMiss={missTarget} giant={unlocked.includes('large-projectile')} fast={unlocked.includes('fast-projectile')}>
       <div className="container projects__playground">
         <div className="projects__header reveal">
           <h2 className="display-lg">

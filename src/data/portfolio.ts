@@ -36,9 +36,11 @@ export const designShowcase: DesignShowcaseItem[] = [
 ];
 
 export const gameUpgrades = [
-  { id: 'double-jump' as const, projectId: 'wonky-diver', label: 'Double jump', description: 'Click again in the air to jump a second time.' },
-  { id: 'pickup-boost' as const, projectId: 'my-lil-pot-utah', label: 'Pickup boost', description: 'Pickups appear in front of project cards and stay on the ground 50% longer.' },
-  { id: 'air-pickup-bonus' as const, projectId: 'sang-pourcent', label: 'Air pickup 2x', description: 'Catch a pickup in mid-air while jumping to earn 2 points.' },
+  { id: 'large-projectile' as const, game: 'selected-work' as const, projectId: 'wonky-race', label: 'Giant projectile', description: 'Launch a projectile three times larger with a bigger slingshot.' },
+  { id: 'fast-projectile' as const, game: 'selected-work' as const, projectId: 'hansel-gretel', label: 'Fast projectile', description: 'Launch projectiles 50% faster with an enhanced trail.' },
+  { id: 'double-jump' as const, game: 'ball' as const, projectId: 'wonky-diver', label: 'Double jump', description: 'Click again in the air to jump a second time.' },
+  { id: 'pickup-boost' as const, game: 'ball' as const, projectId: 'my-lil-pot-utah', label: 'Pickup boost', description: 'Pickups appear in front of project cards and stay on the ground 50% longer.' },
+  { id: 'air-pickup-bonus' as const, game: 'ball' as const, projectId: 'sang-pourcent', label: 'Air pickup 2x', description: 'Catch a pickup in mid-air while jumping to earn 2 points.' },
 ];
 
 export const gameResetLabel = 'Reset upgrades & high scores';

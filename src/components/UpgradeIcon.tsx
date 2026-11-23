@@ -2,6 +2,8 @@ import type { UpgradeId } from '../hooks/useGameUpgrades';
 import DoubleJumpIcon from './DoubleJumpIcon';
 
 export default function UpgradeIcon({ id }: { id: UpgradeId }) {
+  if (id === 'large-projectile') return <svg viewBox="0 0 64 44" width="48" height="34" aria-hidden="true"><circle cx="32" cy="22" r="19" fill="none" stroke="currentColor" strokeWidth="2" /><circle cx="32" cy="22" r="6" fill="currentColor" /></svg>;
+  if (id === 'fast-projectile') return <svg viewBox="0 0 64 44" width="48" height="34" fill="none" aria-hidden="true"><circle cx="45" cy="22" r="12" fill="currentColor" /><path d="M3 12h23M9 22h17M3 32h23" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg>;
   if (id === 'double-jump') return <DoubleJumpIcon />;
   if (id === 'air-pickup-bonus') return <svg viewBox="0 0 64 44" width="48" height="34" fill="none" aria-hidden="true">
     <circle cx="18" cy="15" r="10" stroke="currentColor" strokeWidth="2" /><circle cx="18" cy="15" r="3" fill="currentColor" />

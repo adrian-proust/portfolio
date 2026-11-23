@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { upgradeNotice } from '../data/portfolio';
 import './UpgradeNotice.css';
+import type { MiniGame } from '../hooks/useUpgradeDiscovery';
 
-export default function UpgradeNotice({ onClose }: { onClose: () => void }) {
+export default function UpgradeNotice({ onClose, game }: { onClose: () => void; game: MiniGame }) {
   const [closing, setClosing] = useState(false);
   useEffect(() => {
     const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') setClosing(true); };
@@ -10,7 +11,7 @@ export default function UpgradeNotice({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener('keydown', escape);
   }, []);
 
-  return <aside className={`upgrade-notice${closing ? ' upgrade-notice--closing' : ''}`}
+  return <aside data-game={game} className={`upgrade-notice${closing ? ' upgrade-notice--closing' : ''}`}
     aria-label="Mini-game upgrades" onAnimationEnd={(event) => {
       if (closing && event.target === event.currentTarget) onClose();
     }}>

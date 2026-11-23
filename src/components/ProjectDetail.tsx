@@ -21,10 +21,10 @@ const mediaSrc = (src: string) => src.startsWith('/')
   : src;
 
 export default function ProjectDetail({ project, onBack }: Props) {
-  const upgradesDiscovered = useUpgradeDiscovery();
   const { unlocked, unlock } = useGameUpgrades();
   const enabled = useMiniGamesEnabled();
   const upgrade = gameUpgrades.find(entry => entry.projectId === project.id);
+  const upgradesDiscovered = useUpgradeDiscovery(upgrade?.game);
   const imageSrc = mediaSrc(project.image);
   const featuredVideo = project.links?.find((link) => link.featuredVideo);
   const featuredTrailer = project.trailer?.featured ? project.trailer : null;
@@ -245,7 +245,7 @@ export default function ProjectDetail({ project, onBack }: Props) {
           </button>
         </footer>
         {enabled && upgradesDiscovered && upgrade && <div className="project-detail__upgrade">
-          <button type="button" className="upgrade-unlock" aria-pressed={unlocked.includes(upgrade.id)} onClick={() => unlock(upgrade.id)}>
+          <button type="button" data-game={upgrade.game} className="upgrade-unlock" aria-pressed={unlocked.includes(upgrade.id)} onClick={() => unlock(upgrade.id)}>
             <UpgradeIcon id={upgrade.id} /><span>{upgrade.label}{unlocked.includes(upgrade.id) ? ' ✓' : ''}</span>
           </button>
           <p>{upgrade.description}</p>
