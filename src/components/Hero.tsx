@@ -20,7 +20,7 @@ export default function Hero({ onSelectProject, onDefeat }: Props) {
   const { unlocked } = useGameUpgrades();
   const [score, setScore] = useState(0);
   const effectsRef = useRef<HTMLDivElement>(null);
-  const collect = useCallback(() => setScore(value => value + 1), []);
+  const collect = useCallback((points: number) => setScore(value => value + points), []);
   const resetScore = useCallback(() => { setScore(0); onDefeat(); }, [onDefeat]);
 
   return (
@@ -44,7 +44,7 @@ export default function Hero({ onSelectProject, onDefeat }: Props) {
           {enabled && <GameScore score={score} game="ball" />}
         </div>
       </div>
-      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore} doubleJump={unlocked.includes('double-jump')} pickupBoost={unlocked.includes('pickup-boost')}>
+      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore} doubleJump={unlocked.includes('double-jump')} pickupBoost={unlocked.includes('pickup-boost')} airPickupBonus={unlocked.includes('air-pickup-bonus')}>
         <div className="container recent__group">
           <div className="recent__group-header reveal">
             <h2 className="display-md">{homeProjects.title}<span className="title-dot" aria-hidden="true" /></h2>

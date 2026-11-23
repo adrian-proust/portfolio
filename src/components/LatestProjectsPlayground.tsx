@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { ballTouchesCircle, ballTouchesSpike, layoutBottomWithin, nextSpikeSpeed, spikeLimit } from '../lib/ballGame';
+import { ballTouchesCircle, ballTouchesSpike, layoutBottomWithin, nextSpikeSpeed, spikeLimit, pickupScore } from '../lib/ballGame';
 import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
@@ -20,14 +20,15 @@ type Props = {
   children: ReactNode;
   enabled: boolean;
   effectsRef: RefObject<HTMLDivElement | null>;
-  onCollect: () => void;
+  onCollect: (points: number) => void;
   onLose: () => void;
   score: number;
   doubleJump: boolean;
   pickupBoost: boolean;
+  airPickupBonus: boolean;
 };
 
-export default function LatestProjectsPlayground({ children, enabled, effectsRef, score, onCollect, onLose, doubleJump, pickupBoost }: Props) {
+export default function LatestProjectsPlayground({ children, enabled, effectsRef, score, onCollect, onLose, doubleJump, pickupBoost, airPickupBonus }: Props) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
   const hintRef = useRef<HTMLSpanElement>(null);
@@ -36,6 +37,8 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
   const scoreRef = useRef(score);
   const doubleJumpRef = useRef(doubleJump);
   const pickupBoostRef = useRef(pickupBoost);
+  const airPickupBonusRef = useRef(airPickupBonus);
+  useEffect(() => { airPickupBonusRef.current = airPickupBonus; }, [airPickupBonus]);
   useEffect(() => { pickupBoostRef.current = pickupBoost; }, [pickupBoost]);
   useEffect(() => { doubleJumpRef.current = doubleJump; }, [doubleJump]);
   useEffect(() => { scoreRef.current = score; }, [score]);
@@ -197,8 +200,19 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           pops.push({ element: ring, age: 0 });
           pickup.element.remove();
           pickups.splice(i, 1);
-          scoreRef.current += 1;
-          onCollect();
+          const points = pickupScore(airPickupBonusRef.current, altitude, pickup.landed === null);
+          if (points === 2) {
+            const feedback = document.createElement('span');
+            feedback.className = 'game-air-bonus';
+            feedback.textContent = '2x';
+            feedback.setAttribute('aria-hidden', 'true');
+            feedback.style.left = `${pickup.x}px`;
+            feedback.style.top = `${height - pickup.altitude - PICKUP_SIZE / 2}px`;
+            foreground.append(feedback);
+            clickRipples.push({ element: feedback, age: 0 });
+          }
+          scoreRef.current += points;
+          onCollect(points);
         } else if (pickup.landed !== null && pickup.landed >= (pickupBoostRef.current ? 1.2 : 0.8)) {
           pickup.element.remove();
           pickups.splice(i, 1);

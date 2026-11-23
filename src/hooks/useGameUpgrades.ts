@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 export const UPGRADES_KEY = 'portfolio.ball.upgrades';
-export type UpgradeId = 'double-jump' | 'pickup-boost';
+export type UpgradeId = 'double-jump' | 'pickup-boost' | 'air-pickup-bonus';
 
 export function useGameUpgrades() {
   const [unlocked, setUnlocked] = useState<UpgradeId[]>(() => {
-    try { return JSON.parse(localStorage.getItem(UPGRADES_KEY) ?? '[]').filter((id: unknown) => id === 'double-jump' || id === 'pickup-boost'); }
+    try { return JSON.parse(localStorage.getItem(UPGRADES_KEY) ?? '[]').filter((id: unknown) => id === 'double-jump' || id === 'pickup-boost' || id === 'air-pickup-bonus'); }
     catch { return []; }
   });
   const unlock = (id: UpgradeId) => setUnlocked(current => {

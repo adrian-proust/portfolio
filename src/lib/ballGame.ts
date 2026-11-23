@@ -50,3 +50,7 @@ export function ballTouchesSpike(
     return (ax + t * dx) ** 2 + (ay + t * dy) ** 2 <= 1;
   });
 }
+/** A bonus requires both the ball and the pickup to be off the ground. */
+export function pickupScore(upgraded: boolean, ballAltitude: number, pickupAirborne: boolean): 1 | 2 {
+  return upgraded && ballAltitude > 0.5 && pickupAirborne ? 2 : 1;
+}

@@ -38,6 +38,7 @@ export const designShowcase: DesignShowcaseItem[] = [
 export const gameUpgrades = [
   { id: 'double-jump' as const, projectId: 'wonky-diver', label: 'Double jump', description: 'Click again in the air to jump a second time.' },
   { id: 'pickup-boost' as const, projectId: 'my-lil-pot-utah', label: 'Pickup boost', description: 'Pickups appear in front of project cards and stay on the ground 50% longer.' },
+  { id: 'air-pickup-bonus' as const, projectId: 'sang-pourcent', label: 'Air pickup 2x', description: 'Catch a pickup in mid-air while jumping to earn 2 points.' },
 ];
 
 export const gameResetLabel = 'Reset upgrades & high scores';
