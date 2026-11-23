@@ -2,7 +2,7 @@ import type { Project } from '../data/types';
 import { gameUpgrades } from '../data/portfolio';
 import { useGameUpgrades } from '../hooks/useGameUpgrades';
 import { useMiniGamesEnabled } from '../hooks/useMiniGamesEnabled';
-import UpgradeIcon from './UpgradeIcon';
+import UpgradeChest from './UpgradeChest';
 import { useUpgradeDiscovery } from '../hooks/useUpgradeDiscovery';
 import PresentationViewer from './PresentationViewer';
 import YouTubeViewer from './YouTubeViewer';
@@ -239,17 +239,12 @@ export default function ProjectDetail({ project, onBack }: Props) {
           )}
         </section>
 
+        {enabled && upgradesDiscovered && upgrade && <UpgradeChest key={upgrade.id} upgrade={upgrade} unlocked={unlocked.includes(upgrade.id)} onUnlock={() => unlock(upgrade.id)} />}
         <footer className="project-detail__footer">
           <button type="button" className="button button--ghost" onClick={onBack}>
             ← Back to all projects
           </button>
         </footer>
-        {enabled && upgradesDiscovered && upgrade && <div className="project-detail__upgrade">
-          <button type="button" data-game={upgrade.game} className="upgrade-unlock" aria-pressed={unlocked.includes(upgrade.id)} onClick={() => unlock(upgrade.id)}>
-            <UpgradeIcon id={upgrade.id} /><span>{upgrade.label}{unlocked.includes(upgrade.id) ? ' ✓' : ''}</span>
-          </button>
-          <p>{upgrade.description}</p>
-        </div>}
       </div>
     </article>
   );
