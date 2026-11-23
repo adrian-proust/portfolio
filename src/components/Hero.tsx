@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import type { Project, SectionId } from '../data/types';
-import { gameUpgrades, homeProjects, profile, projects, RECENT_PROJECTS_COUNT } from '../data/portfolio';
+import { homeProjects, profile, projects, RECENT_PROJECTS_COUNT } from '../data/portfolio';
 import { useGameUpgrades } from '../hooks/useGameUpgrades';
 import ProjectCard from './ProjectCard';
 import LatestProjectsPlayground from './LatestProjectsPlayground';
@@ -16,7 +16,7 @@ type Props = {
 export default function Hero({ onSelectProject }: Props) {
   const latestProjects = projects.slice(0, RECENT_PROJECTS_COUNT);
   const enabled = useMiniGamesEnabled();
-  const { unlocked, unlock } = useGameUpgrades();
+  const { unlocked } = useGameUpgrades();
   const [score, setScore] = useState(0);
   const effectsRef = useRef<HTMLDivElement>(null);
   const collect = useCallback(() => setScore(value => value + 1), []);
@@ -55,9 +55,6 @@ export default function Hero({ onSelectProject }: Props) {
                 project={project}
                 index={i}
                 onSelect={onSelectProject}
-                upgrade={enabled ? gameUpgrades.find(upgrade => upgrade.projectId === project.id) : undefined}
-                unlocked={unlocked.includes('double-jump')}
-                onUnlock={unlock}
               />
             ))}
           </div>

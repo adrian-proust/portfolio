@@ -298,12 +298,29 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
         element.style.top = `${height - RADIUS - altitude}px`;
         foreground.append(element);
         clickRipples.push({ element, age: 0 });
+        for (let i = 0; i < 8; i++) {
+          const spark = document.createElement('span');
+          const angle = i * Math.PI / 4;
+          spark.className = 'game-upgrade-spark';
+          spark.setAttribute('aria-hidden', 'true');
+          spark.style.left = `${x}px`;
+          spark.style.top = `${height - RADIUS - altitude}px`;
+          spark.style.setProperty('--spark-x', `${Math.cos(angle) * 42}px`);
+          spark.style.setProperty('--spark-y', `${Math.sin(angle) * 30}px`);
+          foreground.append(spark);
+          clickRipples.push({ element: spark, age: 0 });
+        }
       }
       tutorialJumpsRef.current = Math.min(5, tutorialJumpsRef.current + 1);
       tutorialJumpsForPage = tutorialJumpsRef.current;
       if (tutorialJumpsRef.current >= 5) {
         hint.hidden = true;
-        clickRipples.splice(0).forEach(ripple => ripple.element.remove());
+        for (let i = clickRipples.length - 1; i >= 0; i--) {
+          if (clickRipples[i].element.className === 'game-jump-ripple') {
+            clickRipples[i].element.remove();
+            clickRipples.splice(i, 1);
+          }
+        }
       }
       start();
     };

@@ -163,6 +163,12 @@
   animation: jump-ripple 0.45s ease-out forwards;
 }
 .game-upgrade-ripple { border: 2px solid #6369D1; box-shadow: 0 0 12px #6369D144; }
+.game-upgrade-spark { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #6369D1; box-shadow: 0 0 8px #6369D1; pointer-events: none; animation: upgrade-spark 0.45s ease-out forwards; }
+@keyframes upgrade-spark {
+  from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  to { transform: translate(var(--spark-x), var(--spark-y)) scale(0.2); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .game-upgrade-spark { animation: none; } }
 
 @keyframes jump-hint-shimmer {
   0%, 100% { color: #929292; text-shadow: none; }
