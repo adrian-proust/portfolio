@@ -1,7 +1,13 @@
-.upgrade-chest { --upgrade-color: #6369D1; position: relative; width: 160px; margin: 1.5rem 0 2rem; }
+.upgrade-chest { --upgrade-color: #6369D1; position: relative; display: grid; place-items: center; width: min(100%, 860px); padding: 2rem 1rem; margin: 1.5rem 0 2rem; border: 1px solid var(--upgrade-color); border-radius: 18px; background: color-mix(in srgb, var(--upgrade-color) 5%, var(--bg)); }
 .upgrade-chest[data-game="selected-work"], .upgrade-reveal[data-game="selected-work"] { --upgrade-color: #9A275A; }
 .upgrade-chest__button { display: grid; place-items: center; width: 160px; height: 160px; padding: 0; border: 0; background: transparent; perspective: 650px; cursor: pointer; }
 .upgrade-chest__button:focus-visible { outline: 2px solid var(--upgrade-color); outline-offset: 4px; border-radius: 18px; }
+.upgrade-chest__card { position: relative; display: grid; place-items: center; width: 116px; height: 154px; border: 2px solid color-mix(in srgb, var(--upgrade-color) 60%, white); border-radius: 13px; color: var(--upgrade-color); background: linear-gradient(145deg, color-mix(in srgb, var(--upgrade-color) 22%, var(--bg-raised)), var(--bg-raised)); box-shadow: 0 8px 20px #0005, 0 0 18px color-mix(in srgb, var(--upgrade-color) 25%, transparent); overflow: hidden; transform: rotateX(var(--cube-x, 0deg)) rotateY(var(--cube-y, 0deg)); transition: transform 180ms ease-out; animation: upgrade-card-appear 450ms ease-out; }
+.upgrade-chest__card svg { width: 88px; height: 64px; }
+.upgrade-chest__button:hover .upgrade-chest__card, .upgrade-chest__button:focus-visible .upgrade-chest__card { transform: translateY(-6px) rotateX(var(--cube-x, 0deg)) rotateY(var(--cube-y, 0deg)); }
+.upgrade-chest__card::after { content: ''; position: absolute; inset: -60%; pointer-events: none; background: linear-gradient(110deg, transparent 40%, color-mix(in srgb, var(--upgrade-color) 40%, #fff) 50%, transparent 60%); opacity: .5; animation: upgrade-card-shine 3s ease-in-out infinite; }
+@keyframes upgrade-card-shine { 0%, 15% { transform: translateX(-80%) rotate(-12deg); } 70%, 100% { transform: translateX(80%) rotate(-12deg); } }
+@keyframes upgrade-card-appear { from { opacity: 0; scale: .8; } to { opacity: 1; scale: 1; } }
 .upgrade-chest__sway { display: block; width: 88px; height: 88px; transform-style: preserve-3d; animation: upgrade-chest-shiver 3.2s ease-in-out infinite; }
 .upgrade-chest--unlocked .upgrade-chest__sway { animation: none; }
 .upgrade-chest__cube { position: relative; display: block; width: 88px; height: 88px; transform-style: preserve-3d; transform: translateY(0) rotateX(var(--cube-x, -18deg)) rotateY(var(--cube-y, -28deg)); transition: transform 180ms ease-out; }
@@ -34,4 +40,5 @@
 .upgrade-reveal__close { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border: 0; background: transparent; color: #fff; font-size: 1.8rem; cursor: pointer; }
 .upgrade-reveal__close:focus-visible { outline: 2px solid var(--upgrade-color); border-radius: 50%; }
 @media (prefers-reduced-motion: reduce) { .upgrade-chest__cube { transition: none; } .upgrade-chest__button:hover .upgrade-chest__cube { transform: rotateX(-18deg) rotateY(-28deg); } }
+@media (prefers-reduced-motion: reduce) { .upgrade-chest__card { transition: none; } .upgrade-chest__button:hover .upgrade-chest__card { transform: none; } }
 .upgrade-reveal__content { max-height: calc(100vh - 2rem - 6px); overflow-y: auto; }

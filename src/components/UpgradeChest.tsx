@@ -12,6 +12,7 @@ export default function UpgradeChest({ upgrade, unlocked, onUnlock }: {
   const [phase, setPhase] = useState<'closed' | 'opening' | 'revealed'>('closed');
   const dialogRef = useRef<HTMLDialogElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const isCard = unlocked && phase !== 'opening';
   useEffect(() => {
     if (phase !== 'opening') return;
     const timer = window.setTimeout(() => setPhase('revealed'), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 80 : 650);
@@ -32,19 +33,21 @@ export default function UpgradeChest({ upgrade, unlocked, onUnlock }: {
         aria-label={`${unlocked ? 'View' : 'Unlock'} ${upgrade.label}`} aria-haspopup="dialog"
         onPointerMove={(event) => {
           const bounds = event.currentTarget.getBoundingClientRect();
-          event.currentTarget.style.setProperty('--cube-x', `${-18 - ((event.clientY - bounds.top) / bounds.height - .5) * 18}deg`);
-          event.currentTarget.style.setProperty('--cube-y', `${-28 + ((event.clientX - bounds.left) / bounds.width - .5) * 26}deg`);
+          event.currentTarget.style.setProperty('--cube-x', `${(isCard ? 0 : -18) - ((event.clientY - bounds.top) / bounds.height - .5) * (isCard ? 12 : 18)}deg`);
+          event.currentTarget.style.setProperty('--cube-y', `${(isCard ? 0 : -28) + ((event.clientX - bounds.left) / bounds.width - .5) * (isCard ? 16 : 26)}deg`);
         }}
         onPointerLeave={(event) => { event.currentTarget.style.removeProperty('--cube-x'); event.currentTarget.style.removeProperty('--cube-y'); }}
         onClick={() => {
+          buttonRef.current?.style.removeProperty('--cube-x');
+          buttonRef.current?.style.removeProperty('--cube-y');
           if (unlocked) setPhase('revealed');
           else { setPhase('opening'); onUnlock(); }
         }}>
-        <span className="upgrade-chest__sway" aria-hidden="true">
+        {isCard ? <span className="upgrade-chest__card" aria-hidden="true"><UpgradeIcon id={upgrade.id} /></span> : <span className="upgrade-chest__sway" aria-hidden="true">
           <span className="upgrade-chest__cube">
             {['front', 'back', 'right', 'left', 'top', 'bottom'].map(face => <span key={face} className={`upgrade-chest__face upgrade-chest__face--${face}`}>{unlocked ? <UpgradeIcon id={upgrade.id} /> : '?'}</span>)}
           </span>
-        </span>
+        </span>}
       </button>
       {phase === 'opening' && <div className="upgrade-chest__burst" aria-hidden="true">
         {Array.from({ length: 12 }, (_, i) => <span key={i} style={{ '--burst-x': `${Math.cos(i * Math.PI / 6) * 110}px`, '--burst-y': `${Math.sin(i * Math.PI / 6) * 100}px` } as CSSProperties} />)}
