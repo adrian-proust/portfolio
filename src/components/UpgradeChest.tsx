@@ -59,7 +59,7 @@ export default function UpgradeChest({ upgrade, unlocked, onUnlock }: {
       <div className="upgrade-reveal__content">
         <button type="button" className="upgrade-reveal__close" aria-label="Close upgrade" onClick={close} autoFocus>×</button>
         <div className="upgrade-reveal__icon"><UpgradeIcon id={upgrade.id} /></div>
-        <h2 id={`upgrade-title-${upgrade.id}`}>{upgrade.label}</h2>
+        <h2 id={`upgrade-title-${upgrade.id}`} className="upgrade-reveal__title" aria-label={upgrade.label}><span aria-hidden="true">{Array.from(upgrade.label).map((letter, index) => <span key={index} style={{ animationDelay: `${index * 90}ms` }}>{letter}</span>)}</span></h2>
         <p id={`upgrade-description-${upgrade.id}`}>{upgrade.description}</p>
       </div>
     </dialog>, document.body)}

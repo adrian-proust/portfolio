@@ -42,3 +42,10 @@
 @media (prefers-reduced-motion: reduce) { .upgrade-chest__cube { transition: none; } .upgrade-chest__button:hover .upgrade-chest__cube { transform: rotateX(-18deg) rotateY(-28deg); } }
 @media (prefers-reduced-motion: reduce) { .upgrade-chest__card { transition: none; } .upgrade-chest__button:hover .upgrade-chest__card { transform: none; } }
 .upgrade-reveal__content { max-height: calc(100vh - 2rem - 6px); overflow-y: auto; }
+.upgrade-reveal__title > span { white-space: pre-wrap; }
+.upgrade-reveal__title > span > span { animation: upgrade-title-colors 1.9s ease-in-out infinite; }
+@keyframes upgrade-title-colors {
+  0%, 45%, 100% { color: #fff; }
+  16% { color: #b8f3ff; }
+  30% { color: #ffbce0; }
+}
