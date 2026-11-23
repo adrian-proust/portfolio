@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Project, SectionId } from '../data/types';
 import { homeProjects, profile, projects, RECENT_PROJECTS_COUNT } from '../data/portfolio';
 import { useGameUpgrades } from '../hooks/useGameUpgrades';
@@ -12,13 +12,15 @@ type Props = {
   onNavigate: (id: SectionId) => void;
   onSelectProject?: (project: Project) => void;
   onDefeat: () => void;
+  onScoreChange: (score: number) => void;
 };
 
-export default function Hero({ onSelectProject, onDefeat }: Props) {
+export default function Hero({ onSelectProject, onDefeat, onScoreChange }: Props) {
   const latestProjects = projects.slice(0, RECENT_PROJECTS_COUNT);
   const enabled = useMiniGamesEnabled();
   const { unlocked } = useGameUpgrades();
   const [score, setScore] = useState(0);
+  useEffect(() => { onScoreChange(score); }, [score, onScoreChange]);
   const effectsRef = useRef<HTMLDivElement>(null);
   const collect = useCallback((points: number) => setScore(value => value + points), []);
   const resetScore = useCallback(() => { setScore(0); onDefeat(); }, [onDefeat]);

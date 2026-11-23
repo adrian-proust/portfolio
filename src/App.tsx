@@ -16,6 +16,7 @@ const sectionIds = sections.map((s) => s.id);
 
 export default function App() {
   const defeatsRef = useRef(0);
+  const ballHelpShownRef = useRef(false);
   const [noticeGame, setNoticeGame] = useState<MiniGame | null>(null);
   const selectedMissesRef = useRef(0);
   const selectedHelpShownRef = useRef(false);
@@ -36,14 +37,21 @@ export default function App() {
     catch { return false; }
   });
   const gamesEnabled = useMiniGamesEnabled();
-  const onDefeat = useCallback(() => {
-    defeatsRef.current += 1;
-    if (defeatsRef.current === 2) {
+  const showBallHelp = useCallback(() => {
+    if (!ballHelpShownRef.current) {
+      ballHelpShownRef.current = true;
       setNoticeGame('ball');
       setUpgradesDiscovered(true);
       try { localStorage.setItem(UPGRADE_DISCOVERY_KEY, 'true'); } catch { /* Keep discovery for this visit. */ }
     }
   }, []);
+  const onDefeat = useCallback(() => {
+    defeatsRef.current += 1;
+    if (defeatsRef.current === 2) showBallHelp();
+  }, [showBallHelp]);
+  const onBallScore = useCallback((score: number) => {
+    if (defeatsRef.current === 0 && score > 10) showBallHelp();
+  }, [showBallHelp]);
   const noticeVisible = noticeGame !== null && gamesEnabled;
   const { active, navigate, activeProjectId, openProject, closeProject } =
     useSectionRouting(sectionIds);
@@ -66,7 +74,7 @@ export default function App() {
           <ProjectDetail project={selectedProject} onBack={closeProject} />
         ) : (
           <>
-            <Hero onNavigate={navigate} onSelectProject={handleSelectProject} onDefeat={onDefeat} />
+            <Hero onNavigate={navigate} onSelectProject={handleSelectProject} onDefeat={onDefeat} onScoreChange={onBallScore} />
             <Projects onSelectProject={handleSelectProject} onMiss={onSelectedMiss} />
             <About onSelectProject={handleSelectProject} />
           </>
