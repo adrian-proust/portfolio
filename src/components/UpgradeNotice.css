@@ -1,8 +1,8 @@
 .upgrade-notice {
   position: fixed;
   z-index: 80;
-  left: 1rem;
-  top: 50%;
+  right: 1rem;
+  bottom: 1rem;
   width: min(260px, calc(100vw - 2rem));
   padding: 1.5rem 2.3rem 1.5rem 1.25rem;
   border: 2px solid color-mix(in srgb, var(--upgrade-color, #6369D1) 50%, white);
@@ -11,21 +11,27 @@
   background: var(--upgrade-color, #6369D1);
   color: #fff;
   box-shadow: 0 12px 32px #0007, 0 0 24px color-mix(in srgb, var(--upgrade-color, #6369D1) 40%, transparent);
-  transform: translateY(-50%);
   animation: upgrade-notice-in 550ms cubic-bezier(.2,.8,.25,1.2) both;
 }
 .upgrade-notice p, .upgrade-notice button { position: relative; z-index: 1; }
-.upgrade-notice p { color: #fff; font-size: 0.95rem; line-height: 1.5; font-weight: 600; }
-.upgrade-notice button { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; padding: 0; border: 0; background: transparent; color: inherit; font-size: 1.5rem; cursor: pointer; }
+.upgrade-notice p { color: #fff; font-size: 0.95rem; line-height: 1.5; font-weight: 700; }
+.upgrade-notice__word { display: inline-block; white-space: nowrap; }
+.upgrade-notice__word > span { display: inline-block; animation: upgrade-letter-wave 1.9s ease-in-out infinite; }
+@keyframes upgrade-letter-wave {
+  0%, 45%, 100% { transform: translateY(0); color: #fff; }
+  16% { transform: translateY(-5px); color: #b8f3ff; }
+  30% { transform: translateY(1px); color: #ffbce0; }
+}
+.upgrade-notice button { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; padding: 0; border: 0; background: transparent; color: #fff; font-size: 1.5rem; cursor: pointer; }
 .upgrade-notice button:focus-visible { outline: 2px solid #09090b; border-radius: 50%; }
 .upgrade-notice--closing { pointer-events: none; animation: upgrade-notice-out 280ms ease-in both; }
 @keyframes upgrade-notice-in {
-  0% { opacity: 0; transform: translate(-110%, -50%) scale(.8) rotate(-6deg); }
-  70% { opacity: 1; transform: translate(8px, -50%) scale(1.03) rotate(1deg); }
-  100% { opacity: 1; transform: translate(0, -50%) scale(1) rotate(0); }
+  0% { opacity: 0; transform: translate(110%, 40px) scale(.8) rotate(6deg); }
+  70% { opacity: 1; transform: translate(-8px, 0) scale(1.03) rotate(-1deg); }
+  100% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); }
 }
 @keyframes upgrade-notice-out {
-  to { opacity: 0; transform: translate(-60px, -45%) scale(.85) rotate(-4deg); }
+  to { opacity: 0; transform: translate(60px, 20px) scale(.85) rotate(4deg); }
 }
 @media (prefers-reduced-motion: reduce) {
   @keyframes upgrade-notice-in { from { opacity: 0; } to { opacity: 1; } }

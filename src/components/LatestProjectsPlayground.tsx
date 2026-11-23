@@ -21,7 +21,7 @@ type Props = {
   enabled: boolean;
   effectsRef: RefObject<HTMLDivElement | null>;
   onCollect: (points: number) => void;
-  onLose: () => void;
+  onLose: (score: number) => void;
   score: number;
   doubleJump: boolean;
   pickupBoost: boolean;
@@ -291,8 +291,9 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           respawnLeft = RESPAWN_DURATION;
           release();
           altitude = vy = vx = 0;
+          const lostScore = scoreRef.current;
           scoreRef.current = 0;
-          onLose();
+          onLose(lostScore);
           break;
         }
       }

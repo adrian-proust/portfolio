@@ -45,7 +45,7 @@ export const gameUpgrades = [
 
 export const gameResetLabel = 'Reset upgrades & high scores';
 export const upgradeNotice = {
-  message: 'Need a little help? You’ll find upgrades inside my projects for the mini-games!',
+  message: 'Need a little help? Check out my projects for upgrades!',
   closeLabel: 'Close upgrade tip',
 };
 

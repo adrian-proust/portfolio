@@ -45,12 +45,10 @@ export default function App() {
       try { localStorage.setItem(UPGRADE_DISCOVERY_KEY, 'true'); } catch { /* Keep discovery for this visit. */ }
     }
   }, []);
-  const onDefeat = useCallback(() => {
+  const onDefeat = useCallback((score: number) => {
+    const firstRunBonus = defeatsRef.current === 0 && score > 10;
     defeatsRef.current += 1;
-    if (defeatsRef.current === 2) showBallHelp();
-  }, [showBallHelp]);
-  const onBallScore = useCallback((score: number) => {
-    if (defeatsRef.current === 0 && score > 10) showBallHelp();
+    if (firstRunBonus || defeatsRef.current === 2) showBallHelp();
   }, [showBallHelp]);
   const noticeVisible = noticeGame !== null && gamesEnabled;
   const { active, navigate, activeProjectId, openProject, closeProject } =
@@ -74,7 +72,7 @@ export default function App() {
           <ProjectDetail project={selectedProject} onBack={closeProject} />
         ) : (
           <>
-            <Hero onNavigate={navigate} onSelectProject={handleSelectProject} onDefeat={onDefeat} onScoreChange={onBallScore} />
+            <Hero onNavigate={navigate} onSelectProject={handleSelectProject} onDefeat={onDefeat} />
             <Projects onSelectProject={handleSelectProject} onMiss={onSelectedMiss} />
             <About onSelectProject={handleSelectProject} />
           </>
