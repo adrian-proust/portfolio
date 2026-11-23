@@ -29,7 +29,8 @@
   border: 1px solid var(--accent);
   box-shadow: 0 0 7px rgba(255, 90, 31, 0.22);
 }
-.game-pickup::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: #161614; }
+.game-pickup::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: #747470; }
+.game-spike.game-spike--flying { width: 20px; height: 18px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
 .game-air-bonus { position: absolute; pointer-events: none; color: #6369D1; font: bold 18px var(--font-mono); text-shadow: 0 0 8px #6369D188; animation: air-bonus 0.45s ease-out forwards; }
 @keyframes air-bonus {
   0% { opacity: 1; transform: translate(-50%, -50%) scale(.7); }

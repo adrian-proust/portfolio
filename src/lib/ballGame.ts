@@ -16,6 +16,20 @@ export function nextSpikeSpeed(previous: number, random = Math.random()) {
 export function spikeLimit(score: number) {
   return score < 3 ? 0 : 1 + Math.floor((score - 3) / 4);
 }
+export function flyingSpikeLimit(score: number) {
+  return score < 25 ? 0 : 1 + Math.floor((score - 25) / 6);
+}
+
+export function flyingSpikeAltitude(gap: number, triangleHeight: number, random = Math.random()) {
+  const padding = triangleHeight / 2 + 3;
+  return padding + random * Math.max(0, gap - padding * 2);
+}
+
+/** Rotate coordinates so the existing exact triangle test can face right. */
+export function ballTouchesFlyingSpike(ballX: number, ballY: number, radiusX: number, radiusY: number,
+  spikeX: number, spikeY: number, width: number, height: number) {
+  return ballTouchesSpike(ballY - spikeY, ballX - (spikeX - width / 2), radiusY, radiusX, 0, height, width);
+}
 
 /** Layout coordinates ignore reveal/hover transforms, unlike bounding rectangles. */
 export function layoutBottomWithin(element: HTMLElement, ancestor: HTMLElement) {

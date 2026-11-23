@@ -29,8 +29,8 @@ export const designShowcase: DesignShowcaseItem[] = [
   },
   {
     projectId: 'wonky-race',
-    title: 'Wonky Race — Game & systems design',
-    description: 'An extract from the project’s pitch deck, presenting the game and visually summarising the combat and movement systems I designed and refined.',
+    title: 'Wonky Race — Pitch deck',
+    description: 'An excerpt from the project’s pitch deck, created for publishers, presenting the game and visually summarising the combat and movement systems I designed and refined.',
     presentation: true,
   },
 ];

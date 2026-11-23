@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { ballTouchesCircle, ballTouchesSpike, layoutBottomWithin, nextSpikeSpeed, spikeLimit, pickupScore } from '../lib/ballGame';
+import { ballTouchesCircle, ballTouchesSpike, ballTouchesFlyingSpike, flyingSpikeLimit, flyingSpikeAltitude, layoutBottomWithin, nextSpikeSpeed, spikeLimit, pickupScore } from '../lib/ballGame';
 import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
@@ -13,7 +13,7 @@ const REFORM_DURATION = 0.75;
 
 type Pickup = { element: HTMLSpanElement; x: number; altitude: number; speed: number; landed: number | null };
 type Pop = { element: HTMLSpanElement; age: number };
-type Spike = { element: HTMLSpanElement; x: number; speed: number };
+type Spike = { element: HTMLSpanElement; x: number; speed: number; altitude: number; flying: boolean };
 type Particle = { element: HTMLSpanElement; x: number; altitude: number; vx: number; vy: number; age: number };
 type ReformParticle = { element: HTMLSpanElement; dx: number; dy: number };
 type Props = {
@@ -70,6 +70,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     let inView = false;
     let untilSpawn = 0.45;
     let untilSpike = 1.8;
+    let untilFlyingSpike = 0;
     let respawnLeft = 0;
     let homeHeight = home.clientHeight;
     const pickups: Pickup[] = [];
@@ -235,27 +236,45 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       const limit = spikeLimit(scoreRef.current);
       if (respawnLeft === 0 && limit > 0) {
         untilSpike -= dt;
-        if (untilSpike <= 0 && spikes.length < limit) {
+        if (untilSpike <= 0 && spikes.filter(spike => !spike.flying).length < limit) {
           const element = document.createElement('span');
           element.className = 'game-spike';
           element.setAttribute('aria-hidden', 'true');
           foreground.append(element);
           const previousSpeed = spikes.at(-1)?.speed ?? 160;
           const speed = nextSpikeSpeed(previousSpeed);
-          spikes.push({ element, x: width + SPIKE_WIDTH / 2, speed });
+          spikes.push({ element, x: width + SPIKE_WIDTH / 2, speed, altitude: 0, flying: false });
           untilSpike = 2.2 + Math.random() * 1.2;
         }
       } else untilSpike = 1.8;
 
+      const flyingLimit = flyingSpikeLimit(scoreRef.current);
+      if (respawnLeft === 0 && flyingLimit > 0) {
+        untilFlyingSpike -= dt;
+        if (untilFlyingSpike <= 0 && spikes.filter(spike => spike.flying).length < flyingLimit) {
+          const element = document.createElement('span');
+          element.className = 'game-spike game-spike--flying';
+          element.setAttribute('aria-hidden', 'true');
+          foreground.append(element);
+          spikes.push({ element, x: -SPIKE_HEIGHT / 2, speed: nextSpikeSpeed(spikes.at(-1)?.speed ?? 160),
+            altitude: flyingSpikeAltitude(maxAltitude + RADIUS * 2 * 1.12, SPIKE_WIDTH), flying: true });
+          untilFlyingSpike = 2.4 + Math.random();
+        }
+      } else untilFlyingSpike = 0;
+
       for (let i = spikes.length - 1; i >= 0; i--) {
         const spike = spikes[i];
-        spike.x -= spike.speed * dt;
-        spike.element.style.transform = `translate3d(${spike.x - SPIKE_WIDTH / 2}px, ${height - SPIKE_HEIGHT}px, 0)`;
-        if (spike.x < -SPIKE_WIDTH) {
+        spike.x += (spike.flying ? 1 : -1) * spike.speed * dt;
+        spike.altitude = spike.flying ? Math.min(spike.altitude, maxAltitude + RADIUS * 2 * 1.12 - SPIKE_WIDTH / 2 - 3) : 0;
+        spike.element.style.transform = spike.flying
+          ? `translate3d(${spike.x - SPIKE_HEIGHT / 2}px, ${height - spike.altitude - SPIKE_WIDTH / 2}px, 0)`
+          : `translate3d(${spike.x - SPIKE_WIDTH / 2}px, ${height - SPIKE_HEIGHT}px, 0)`;
+        if (spike.flying ? spike.x > width + SPIKE_HEIGHT : spike.x < -SPIKE_WIDTH) {
           spike.element.remove();
           spikes.splice(i, 1);
-        } else if (respawnLeft === 0 && ballTouchesSpike(x, altitude + RADIUS * scaleY,
-          RADIUS * scaleX, RADIUS * scaleY, spike.x, SPIKE_WIDTH, SPIKE_HEIGHT)) {
+        } else if (respawnLeft === 0 && (spike.flying
+          ? ballTouchesFlyingSpike(x, altitude + RADIUS * scaleY, RADIUS * scaleX, RADIUS * scaleY, spike.x, spike.altitude, SPIKE_HEIGHT, SPIKE_WIDTH)
+          : ballTouchesSpike(x, altitude + RADIUS * scaleY, RADIUS * scaleX, RADIUS * scaleY, spike.x, SPIKE_WIDTH, SPIKE_HEIGHT))) {
           // One collision ends the run; all hazards are removed together.
           for (let j = 0; j < 16; j++) {
             const angle = (j / 16) * Math.PI * 2;
