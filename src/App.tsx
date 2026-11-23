@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import Nav from './components/Nav';
 import UpgradeNotice from './components/UpgradeNotice';
 import { useMiniGamesEnabled } from './hooks/useMiniGamesEnabled';
+import { UpgradeDiscoveryContext, UPGRADE_DISCOVERY_KEY } from './hooks/useUpgradeDiscovery';
 import Hero from './components/Hero';
 import Projects from './components/Projects';
 import About from './components/About';
@@ -16,10 +17,18 @@ const sectionIds = sections.map((s) => s.id);
 export default function App() {
   const defeatsRef = useRef(0);
   const [showUpgradeNotice, setShowUpgradeNotice] = useState(false);
+  const [upgradesDiscovered, setUpgradesDiscovered] = useState(() => {
+    try { return localStorage.getItem(UPGRADE_DISCOVERY_KEY) === 'true'; }
+    catch { return false; }
+  });
   const gamesEnabled = useMiniGamesEnabled();
   const onDefeat = useCallback(() => {
     defeatsRef.current += 1;
-    if (defeatsRef.current === 2) setShowUpgradeNotice(true);
+    if (defeatsRef.current === 2) {
+      setShowUpgradeNotice(true);
+      setUpgradesDiscovered(true);
+      try { localStorage.setItem(UPGRADE_DISCOVERY_KEY, 'true'); } catch { /* Keep discovery for this visit. */ }
+    }
   }, []);
   const noticeVisible = showUpgradeNotice && gamesEnabled;
   const { active, navigate, activeProjectId, openProject, closeProject } =
@@ -37,6 +46,7 @@ export default function App() {
   return (
     <>
       <Nav sections={sections} active={active} onNavigate={navigate} />
+      <UpgradeDiscoveryContext.Provider value={upgradesDiscovered}>
       <main className={noticeVisible ? 'upgrades-announced' : undefined}>
         {selectedProject ? (
           <ProjectDetail project={selectedProject} onBack={closeProject} />
@@ -49,6 +59,7 @@ export default function App() {
         )}
       </main>
       {noticeVisible && <UpgradeNotice onClose={() => setShowUpgradeNotice(false)} />}
+      </UpgradeDiscoveryContext.Provider>
     </>
   );
 }

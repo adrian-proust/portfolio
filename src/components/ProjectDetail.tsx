@@ -3,6 +3,7 @@ import { gameUpgrades } from '../data/portfolio';
 import { useGameUpgrades } from '../hooks/useGameUpgrades';
 import { useMiniGamesEnabled } from '../hooks/useMiniGamesEnabled';
 import DoubleJumpIcon from './DoubleJumpIcon';
+import { useUpgradeDiscovery } from '../hooks/useUpgradeDiscovery';
 import PresentationViewer from './PresentationViewer';
 import YouTubeViewer from './YouTubeViewer';
 import './ProjectDetail.css';
@@ -20,6 +21,7 @@ const mediaSrc = (src: string) => src.startsWith('/')
   : src;
 
 export default function ProjectDetail({ project, onBack }: Props) {
+  const upgradesDiscovered = useUpgradeDiscovery();
   const { unlocked, unlock } = useGameUpgrades();
   const enabled = useMiniGamesEnabled();
   const upgrade = gameUpgrades.find(entry => entry.projectId === project.id);
@@ -242,7 +244,7 @@ export default function ProjectDetail({ project, onBack }: Props) {
             ← Back to all projects
           </button>
         </footer>
-        {enabled && upgrade && <div className="project-detail__upgrade">
+        {enabled && upgradesDiscovered && upgrade && <div className="project-detail__upgrade">
           <button type="button" className="upgrade-unlock" aria-pressed={unlocked.includes(upgrade.id)} onClick={() => unlock(upgrade.id)}>
             <DoubleJumpIcon /><span>{upgrade.label}{unlocked.includes(upgrade.id) ? ' ✓' : ''}</span>
           </button>

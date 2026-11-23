@@ -1,6 +1,7 @@
 import type { Project } from '../data/types';
 import { gameUpgrades } from '../data/portfolio';
 import DoubleJumpIcon from './DoubleJumpIcon';
+import { useUpgradeDiscovery } from '../hooks/useUpgradeDiscovery';
 import './ProjectCard.css';
 
 type Props = {
@@ -13,6 +14,7 @@ const badgeModifier = (category: Project['category']) =>
   category.toLowerCase().replace(/\s+/g, '-');
 
 export default function ProjectCard({ project, index, onSelect }: Props) {
+  const upgradesDiscovered = useUpgradeDiscovery();
   const upgrade = gameUpgrades.find(entry => entry.projectId === project.id);
   const imageSrc = project.image.startsWith('/')
     ? `${import.meta.env.BASE_URL}${project.image.slice(1)}`
@@ -59,7 +61,7 @@ export default function ProjectCard({ project, index, onSelect }: Props) {
           <span className={`badge badge--${badgeModifier(project.category)}`}>
             {project.category}
           </span>
-          {upgrade && <span className="project-card__upgrade-icon" role="img" aria-label={upgrade.label} title={upgrade.description}><DoubleJumpIcon /></span>}
+          {upgradesDiscovered && upgrade && <span className="project-card__upgrade-icon" role="img" aria-label={upgrade.label} title={upgrade.description}><DoubleJumpIcon /></span>}
         </header>
         <h3 className="project-card__title">{project.title}</h3>
         <p className="mono project-card__duration">{project.duration}</p>
