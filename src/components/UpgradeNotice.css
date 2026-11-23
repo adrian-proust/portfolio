@@ -15,7 +15,7 @@
   animation: upgrade-notice-in 550ms cubic-bezier(.2,.8,.25,1.2) both;
 }
 .upgrade-notice p, .upgrade-notice button { position: relative; z-index: 1; }
-.upgrade-notice p { font-size: 0.95rem; line-height: 1.5; font-weight: 600; }
+.upgrade-notice p { color: #fff; font-size: 0.95rem; line-height: 1.5; font-weight: 600; }
 .upgrade-notice button { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; padding: 0; border: 0; background: transparent; color: inherit; font-size: 1.5rem; cursor: pointer; }
 .upgrade-notice button:focus-visible { outline: 2px solid #09090b; border-radius: 50%; }
 .upgrade-notice--closing { pointer-events: none; animation: upgrade-notice-out 280ms ease-in both; }
