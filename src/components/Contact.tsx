@@ -1,6 +1,8 @@
 import { contact, profile } from '../data/portfolio';
 import MarqueeBanner from './MarqueeBanner';
 import './Contact.css';
+import { gameResetLabel } from '../data/portfolio';
+import { UPGRADES_KEY } from '../hooks/useGameUpgrades';
 
 export default function Contact() {
   const channels = [
@@ -38,6 +40,10 @@ export default function Contact() {
           </span>
           <span>{profile.title}</span>
         </div>
+        <button type="button" className="game-reset mono" onClick={() => {
+          for (const key of [UPGRADES_KEY, 'portfolio.ball.highScore', 'portfolio.selected-work.highScore']) localStorage.removeItem(key);
+          window.location.reload();
+        }}>{gameResetLabel}</button>
       </div>
     </footer>
   );

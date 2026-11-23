@@ -23,15 +23,18 @@ type Props = {
   onCollect: () => void;
   onLose: () => void;
   score: number;
+  doubleJump: boolean;
 };
 
-export default function LatestProjectsPlayground({ children, enabled, effectsRef, score, onCollect, onLose }: Props) {
+export default function LatestProjectsPlayground({ children, enabled, effectsRef, score, onCollect, onLose, doubleJump }: Props) {
   const areaRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLButtonElement>(null);
   const hintRef = useRef<HTMLSpanElement>(null);
   const tutorialJumpsRef = useRef(tutorialJumpsForPage);
   const jumpRef = useRef<() => void>(() => {});
   const scoreRef = useRef(score);
+  const doubleJumpRef = useRef(doubleJump);
+  useEffect(() => { doubleJumpRef.current = doubleJump; }, [doubleJump]);
   useEffect(() => { scoreRef.current = score; }, [score]);
 
   useEffect(() => {
@@ -50,6 +53,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     let vx = 0;
     let altitude = 0;
     let vy = 0;
+    let jumpsUsed = 0;
     let frame = 0;
     let lastTime = 0;
     let held = false;
@@ -144,6 +148,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       if (altitude <= 0) {
         altitude = 0;
         vy = 0;
+        jumpsUsed = 0;
       }
       const speed = Math.min(1, Math.abs(vx) / 900);
       const airborne = altitude > 0;
@@ -278,11 +283,22 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       if (active && !frame) frame = requestAnimationFrame(tick);
     };
     const jump = () => {
-      // Jump only from the ground: repeated clicks cannot escape the play area.
-      if (respawnLeft > 0 || altitude > 0.5 || vy > 0) return;
+      if (respawnLeft > 0) return;
+      const airborne = altitude > 0.5 || vy > 0;
+      if (airborne && (!doubleJumpRef.current || jumpsUsed >= 2)) return;
       measure();
       if (maxAltitude <= 0) return;
-      vy = Math.sqrt(2 * 1000 * maxAltitude);
+      jumpsUsed = airborne ? 2 : 1;
+      vy = Math.sqrt(2 * 1000 * Math.max(0, maxAltitude - altitude));
+      if (airborne) {
+        const element = document.createElement('span');
+        element.className = 'game-jump-ripple game-upgrade-ripple';
+        element.setAttribute('aria-hidden', 'true');
+        element.style.left = `${x}px`;
+        element.style.top = `${height - RADIUS - altitude}px`;
+        foreground.append(element);
+        clickRipples.push({ element, age: 0 });
+      }
       tutorialJumpsRef.current = Math.min(5, tutorialJumpsRef.current + 1);
       tutorialJumpsForPage = tutorialJumpsRef.current;
       if (tutorialJumpsRef.current >= 5) {
@@ -330,6 +346,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     };
     const keyDown = (event: KeyboardEvent) => {
       if ((event.code !== 'Space' && event.code !== 'Enter') || event.repeat) return;
+      event.stopPropagation();
       event.preventDefault();
       held = true;
       jump();

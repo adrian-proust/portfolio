@@ -162,6 +162,7 @@
   pointer-events: none;
   animation: jump-ripple 0.45s ease-out forwards;
 }
+.game-upgrade-ripple { border: 2px solid #6369D1; box-shadow: 0 0 12px #6369D144; }
 
 @keyframes jump-hint-shimmer {
   0%, 100% { color: #929292; text-shadow: none; }

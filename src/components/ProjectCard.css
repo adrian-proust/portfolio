@@ -12,6 +12,24 @@
     transform 0.8s var(--ease),
     border-color 0.3s;
 }
+.project-card__main { display: flex; flex: 1; flex-direction: column; border-radius: inherit; }
+.project-card__main:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.project-card__upgrade {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 1.5rem 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #6369D1;
+  border-radius: 8px;
+  background: transparent;
+  color: #6369D1;
+  font: 0.75rem var(--font-mono);
+  cursor: pointer;
+}
+.project-card__upgrade:hover, .project-card__upgrade:focus-visible { background: #6369D126; outline: 2px solid #6369D1; outline-offset: 2px; }
+.project-card__upgrade.is-unlocked { box-shadow: 0 0 12px #6369D133; }
 
 @property --card-glow-angle {
   syntax: '<angle>';
@@ -46,7 +64,7 @@
 }
 
 .project-card:hover,
-.project-card:focus-visible {
+.project-card:has(.project-card__main:focus-visible) {
   border-color: rgba(255, 90, 31, 0.5);
 }
 
@@ -60,8 +78,8 @@
 
 .project-card:hover::before,
 .project-card:hover::after,
-.project-card:focus-visible::before,
-.project-card:focus-visible::after {
+.project-card:has(.project-card__main:focus-visible)::before,
+.project-card:has(.project-card__main:focus-visible)::after {
   opacity: 1;
   animation-play-state: running;
 }
@@ -122,13 +140,13 @@
 }
 
 .project-card:hover .project-card__overlay,
-.project-card:focus-visible .project-card__overlay {
+.project-card:has(.project-card__main:focus-visible) .project-card__overlay {
   opacity: 1;
   transform: none;
 }
 
 .project-card:hover .project-card__media img,
-.project-card:focus-visible .project-card__media img {
+.project-card:has(.project-card__main:focus-visible) .project-card__media img {
   transform: scale(1.06);
   filter: blur(2px);
 }

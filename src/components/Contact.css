@@ -78,3 +78,5 @@
     grid-column: 1 / -1;
   }
 }
+.game-reset { display: block; margin: 1.5rem 0 0 auto; padding: 0.35rem; border: 0; background: none; color: #6369D1; font-size: 0.65rem; cursor: pointer; }
+.game-reset:hover, .game-reset:focus-visible { text-decoration: underline; }

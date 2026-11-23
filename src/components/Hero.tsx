@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { Project, SectionId } from '../data/types';
-import { homeProjects, profile, projects, RECENT_PROJECTS_COUNT } from '../data/portfolio';
+import { gameUpgrades, homeProjects, profile, projects, RECENT_PROJECTS_COUNT } from '../data/portfolio';
+import { useGameUpgrades } from '../hooks/useGameUpgrades';
 import ProjectCard from './ProjectCard';
 import LatestProjectsPlayground from './LatestProjectsPlayground';
 import GameScore from './GameScore';
@@ -15,6 +16,7 @@ type Props = {
 export default function Hero({ onSelectProject }: Props) {
   const latestProjects = projects.slice(0, RECENT_PROJECTS_COUNT);
   const enabled = useMiniGamesEnabled();
+  const { unlocked, unlock } = useGameUpgrades();
   const [score, setScore] = useState(0);
   const effectsRef = useRef<HTMLDivElement>(null);
   const collect = useCallback(() => setScore(value => value + 1), []);
@@ -41,7 +43,7 @@ export default function Hero({ onSelectProject }: Props) {
           {enabled && <GameScore score={score} game="ball" />}
         </div>
       </div>
-      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore}>
+      <LatestProjectsPlayground enabled={enabled} effectsRef={effectsRef} score={score} onCollect={collect} onLose={resetScore} doubleJump={unlocked.includes('double-jump')}>
         <div className="container recent__group">
           <div className="recent__group-header reveal">
             <h2 className="display-md">{homeProjects.title}<span className="title-dot" aria-hidden="true" /></h2>
@@ -53,6 +55,9 @@ export default function Hero({ onSelectProject }: Props) {
                 project={project}
                 index={i}
                 onSelect={onSelectProject}
+                upgrade={enabled ? gameUpgrades.find(upgrade => upgrade.projectId === project.id) : undefined}
+                unlocked={unlocked.includes('double-jump')}
+                onUnlock={unlock}
               />
             ))}
           </div>

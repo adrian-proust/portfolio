@@ -35,6 +35,12 @@ export const designShowcase: DesignShowcaseItem[] = [
   },
 ];
 
+export const gameUpgrades = [
+  { id: 'double-jump' as const, projectId: 'wonky-diver', label: 'Double jump', description: 'Click again in the air to jump a second time.' },
+];
+
+export const gameResetLabel = 'Reset upgrades & high scores';
+
 export const sections: NavSection[] = [
   { id: 'Home', label: 'Home' },
   { id: 'Projects', label: 'Projects' },
