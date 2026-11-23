@@ -28,7 +28,11 @@ export default function DesignShowcase({ onSelectProject }: { onSelectProject: (
       </header>
       <div className="design-showcase__viewer reveal">
         <button type="button" className="design-showcase__arrow" aria-label="Previous design" onClick={() => move(-1)}>←</button>
-        <img key={item.image} className="design-showcase__image" src={`${import.meta.env.BASE_URL}${item.image.slice(1)}`} alt={item.imageAlt} loading="lazy" />
+        {item.presentation ? (
+          <iframe key={item.projectId} className="design-showcase__image" src={project.presentations?.[0]?.embedUrl} title={`${project.title} — Presentation`} loading="lazy" allowFullScreen />
+        ) : (
+          <img key={item.image} className="design-showcase__image" src={`${import.meta.env.BASE_URL}${item.image.slice(1)}`} alt={item.imageAlt} loading="lazy" />
+        )}
         <button type="button" className="design-showcase__arrow" aria-label="Next design" onClick={() => move(1)}>→</button>
       </div>
       <div className="design-showcase__caption reveal" aria-live="polite" aria-atomic="true">

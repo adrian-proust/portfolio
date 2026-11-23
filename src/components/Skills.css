@@ -19,10 +19,6 @@
   padding-left: 0.75rem;
 }
 
-.skills__item:hover .skills__name {
-  color: var(--accent);
-}
-
 .skills__num {
   font-size: 0.75rem;
   color: var(--accent);
@@ -33,7 +29,6 @@
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.05;
   text-transform: uppercase;
-  transition: color 0.25s;
 }
 
 .skills__detail {

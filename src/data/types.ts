@@ -4,9 +4,10 @@ export type DesignShowcaseItem = {
   projectId: string;
   title: string;
   description: string;
-  image: string;
-  imageAlt: string;
-};
+} & (
+  | { image: string; imageAlt: string; presentation?: never }
+  | { presentation: true; image?: never; imageAlt?: never }
+);
 
 export type Presentation = { title: string; embedUrl: string; url: string; description?: string };
 
