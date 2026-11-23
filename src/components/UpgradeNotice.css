@@ -9,7 +9,7 @@
   border-radius: 14px;
   overflow: hidden;
   background: var(--upgrade-color, #6369D1);
-  color: #09090b;
+  color: #fff;
   box-shadow: 0 12px 32px #0007, 0 0 24px color-mix(in srgb, var(--upgrade-color, #6369D1) 40%, transparent);
   transform: translateY(-50%);
   animation: upgrade-notice-in 550ms cubic-bezier(.2,.8,.25,1.2) both;
