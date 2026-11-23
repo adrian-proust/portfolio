@@ -66,6 +66,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     let maxAltitude = 0;
     let scaleX = 1;
     let scaleY = 1;
+    let squash = 0, squashVelocity = 0;
     let active = false;
     let inView = false;
     let untilSpawn = 0.45;
@@ -82,7 +83,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     const clickRipples: Pop[] = [];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     // Reserve room for the slight horizontal stretch at the edges.
-    const clampX = (value: number) => Math.max(RADIUS * 1.32, Math.min(width - RADIUS * 1.32, value));
+    const clampX = (value: number) => Math.max(RADIUS * 1.52, Math.min(width - RADIUS * 1.52, value));
     const paint = () => {
       ball.style.transform = `translate3d(${x - RADIUS}px, ${height - RADIUS * 2 - altitude}px, 0) scale(${scaleX}, ${scaleY})`;
     };
@@ -130,7 +131,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           reformCore = null;
           x = targetX = clampX(width * 0.18);
           altitude = vy = vx = 0;
-          scaleX = scaleY = 1;
+          scaleX = scaleY = 1; squash = squashVelocity = 0;
           ball.classList.remove('project-ball--exploding');
         }
       }
@@ -145,6 +146,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       }
       // Holding sustains the ascent; releasing makes the ball fall sooner.
       const gravity = held && vy > 0 ? 1000 : 2200;
+      const wasAirborne = altitude > 0;
       altitude += vy * dt - 0.5 * gravity * dt * dt;
       vy -= gravity * dt;
       const ceiling = maxAltitude;
@@ -153,14 +155,18 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
         vy = Math.min(0, vy);
       }
       if (altitude <= 0) {
+        if (wasAirborne && vy < -40 && !reducedMotion.matches) squashVelocity = Math.min(7, Math.abs(vy) / 65);
         altitude = 0;
         vy = 0;
         jumpsUsed = 0;
       }
       const airborne = altitude > 0;
       const { x: wantedX, y: wantedY } = ballDeformation(vx, airborne, reducedMotion.matches);
-      scaleX += (wantedX - scaleX) * Math.min(1, dt * 20);
-      scaleY += (wantedY - scaleY) * Math.min(1, dt * 20);
+      squashVelocity += (-squash * 180 - squashVelocity * 16) * dt;
+      squash += squashVelocity * dt;
+      const bounce = reducedMotion.matches ? 0 : squash;
+      scaleX += (Math.max(.7, Math.min(1.5, wantedX + bounce)) - scaleX) * Math.min(1, dt * 25);
+      scaleY += (Math.max(.6, Math.min(1.24, wantedY - bounce * .8)) - scaleY) * Math.min(1, dt * 25);
       paint();
       untilSpawn -= dt;
       if (untilSpawn <= 0 && pickups.length < 12) {
@@ -255,7 +261,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           element.setAttribute('aria-hidden', 'true');
           foreground.append(element);
           spikes.push({ element, x: -SPIKE_HEIGHT / 2, speed: nextSpikeSpeed(spikes.at(-1)?.speed ?? 160),
-            altitude: flyingSpikeAltitude(maxAltitude + RADIUS * 2 * 1.32, SPIKE_WIDTH), flying: true });
+            altitude: flyingSpikeAltitude(maxAltitude + RADIUS * 2 * 1.24, SPIKE_WIDTH), flying: true });
           untilFlyingSpike = 2.4 + Math.random();
         }
       } else untilFlyingSpike = 0;
@@ -263,7 +269,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       for (let i = spikes.length - 1; i >= 0; i--) {
         const spike = spikes[i];
         spike.x += (spike.flying ? 1 : -1) * spike.speed * dt;
-        spike.altitude = spike.flying ? Math.min(spike.altitude, maxAltitude + RADIUS * 2 * 1.32 - SPIKE_WIDTH / 2 - 3) : 0;
+        spike.altitude = spike.flying ? Math.min(spike.altitude, maxAltitude + RADIUS * 2 * 1.24 - SPIKE_WIDTH / 2 - 3) : 0;
         spike.element.style.transform = spike.flying
           ? `translate3d(${spike.x - SPIKE_HEIGHT / 2}px, ${height - spike.altitude - SPIKE_WIDTH / 2}px, 0)`
           : `translate3d(${spike.x - SPIKE_WIDTH / 2}px, ${height - SPIKE_HEIGHT}px, 0)`;
@@ -325,6 +331,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       if (maxAltitude <= 0) return;
       jumpsUsed = airborne ? 2 : 1;
       vy = Math.sqrt(2 * 1000 * Math.max(0, maxAltitude - altitude));
+      if (!reducedMotion.matches) squashVelocity = -3;
       if (airborne) {
         const element = document.createElement('span');
         element.className = 'game-jump-ripple game-upgrade-ripple';
@@ -417,7 +424,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       const cards = Array.from(area.querySelectorAll<HTMLElement>('.project-card'));
       const cardsBottom = Math.max(...cards.map(card => layoutBottomWithin(card, area)));
       // The top of the stretched ball stops just below the lowest card edge.
-      maxAltitude = cards.length ? Math.max(0, height - cardsBottom - RADIUS * 2 * 1.32 - 4) : 0;
+      maxAltitude = cards.length ? Math.max(0, height - cardsBottom - RADIUS * 2 * 1.24 - 4) : 0;
       altitude = Math.min(altitude, maxAltitude);
       pickups.forEach(pickup => { pickup.x = Math.min(width - PICKUP_SIZE, pickup.x); });
       paint();

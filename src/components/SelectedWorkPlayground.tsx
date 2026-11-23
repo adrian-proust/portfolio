@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { segmentHitsCircle, targetDifficulty, projectileSettings } from '../lib/slingshotGame';
+import { stretchedProjectileHit, projectileStretch, targetDifficulty, projectileSettings } from '../lib/slingshotGame';
 import './SelectedWorkPlayground.css';
 
 export default function SelectedWorkPlayground({ children, enabled, score, onHit, onMiss, giant, fast }: {
@@ -37,6 +37,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let growAnimation: Animation | undefined;
     let ballGrowAnimation: Animation | undefined;
+    let handleShake: Animation | undefined;
     const ballCore = ball.querySelector('.selected-game__ball-core');
     const dragHint = ball.querySelector<HTMLElement>('.selected-game__drag-hint');
     const hintRings = ball.querySelector<HTMLElement>('.selected-game__hint-rings');
@@ -75,12 +76,14 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       effects.clear();
       growAnimation?.cancel();
       ballGrowAnimation?.cancel();
+      handleShake?.cancel();
     };
     const lines = Array.from(ropes.querySelectorAll('line'));
     const handle = ropes.querySelector('path');
     const aim = ropes.querySelector<SVGPathElement>('.selected-game__aim');
     const paint = () => {
-      ball.style.transform = `translate3d(${x - projectileRadius}px, ${y - projectileRadius}px, 0)`;
+      const stretch = projectileStretch(fast, flying, reducedMotion.matches);
+      ball.style.transform = `translate3d(${x - projectileRadius}px, ${y - projectileRadius}px, 0) rotate(${flying ? Math.atan2(vy, vx) : 0}rad) scale(${stretch.x}, ${stretch.y})`;
       target.style.transform = `translate3d(${targetX - radius}px, ${targetY - radius}px, 0)`;
       ball.dataset.state = flying ? 'flying' : pointer === null ? 'ready' : 'dragging';
       handle?.setAttribute('d', `M 0 ${anchorY} L ${anchorX - 10 * handleScale} ${anchorY} L ${anchorX + 14 * handleScale} ${anchorY - 25 * handleScale} M ${anchorX - 10 * handleScale} ${anchorY} L ${anchorX + 14 * handleScale} ${anchorY + 25 * handleScale}`);
@@ -156,7 +159,7 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
           { transform: `translate(${(Math.random() - 0.5) * 22}px, ${(Math.random() - 0.5) * 22}px) scale(0)`, opacity: 0 },
         ], 220, 3);
       }
-      if (segmentHitsCircle(x, y - previousTargetY, nextX, nextY - targetY, targetX, 0, projectileRadius + radius)) {
+      if (stretchedProjectileHit(x, y - previousTargetY, nextX, nextY - targetY, targetX, radius, projectileRadius, Math.atan2(vy, vx), projectileStretch(fast, flying, reducedMotion.matches))) {
         burst(targetX, targetY, true);
         onHit();
         placeTarget();
@@ -197,6 +200,21 @@ export default function SelectedWorkPlayground({ children, enabled, score, onHit
       flying = true;
       ballGrowAnimation?.cancel();
       burst(x, y, false);
+      if (giant) {
+        for (let i = 0; i < 14; i++) {
+          const angle = Math.atan2(vy, vx) + (Math.random() - .5) * 2;
+          const distance = reducedMotion.matches ? 4 : 25 + Math.random() * 55;
+          effect('selected-game__muzzle-spark', anchorX, anchorY, [
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+            { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 },
+          ], 380, 3 + Math.random() * 4);
+        }
+        handleShake?.cancel();
+        if (!reducedMotion.matches) handleShake = handle?.animate([
+          { transform: 'translate(0, 0)' }, { transform: 'translate(-3px, 1px)' },
+          { transform: 'translate(2px, -1px)' }, { transform: 'translate(-1px, 0)' }, { transform: 'translate(0, 0)' },
+        ], { duration: 220, easing: 'ease-out' });
+      }
       lines.forEach(line => line.animate([{ strokeWidth: 3, opacity: 0.5 }, { strokeWidth: 1.5, opacity: 1 }], { duration: 250 }));
       pointer = null;
       lastTime = 0;

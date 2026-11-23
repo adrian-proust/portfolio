@@ -110,3 +110,4 @@
 .selected-game--fast .selected-game__spark { background: #9A275A; }
 .selected-game--giant .selected-game__shockwave { border-color: #9A275A; }
 .selected-game--giant .selected-game__spark { background: #9A275A; }
+.selected-game__muzzle-spark { position: absolute; border-radius: 50%; background: #9A275A; box-shadow: 0 0 8px #9A275A88; pointer-events: none; }

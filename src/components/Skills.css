@@ -11,12 +11,7 @@
   border-bottom: 1px solid var(--line);
   transition:
     opacity 0.8s var(--ease),
-    transform 0.8s var(--ease),
-    padding 0.3s var(--ease);
-}
-
-.skills__item:hover {
-  padding-left: 0.75rem;
+    transform 0.8s var(--ease);
 }
 
 .skills__num {
