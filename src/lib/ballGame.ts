@@ -68,3 +68,8 @@ export function ballTouchesSpike(
 export function pickupScore(upgraded: boolean, ballAltitude: number, pickupAirborne: boolean): 1 | 2 {
   return upgraded && ballAltitude > 0.5 && pickupAirborne ? 2 : 1;
 }
+export function ballDeformation(velocity: number, airborne: boolean, reducedMotion = false) {
+  if (reducedMotion) return { x: 1, y: 1 };
+  const speed = Math.min(1, Math.abs(velocity) / 900);
+  return airborne ? { x: 0.75, y: 1.32 } : { x: 1 + speed * 0.3, y: 1 - speed * 0.32 };
+}

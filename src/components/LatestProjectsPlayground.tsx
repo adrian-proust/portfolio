@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { ballTouchesCircle, ballTouchesSpike, ballTouchesFlyingSpike, flyingSpikeLimit, flyingSpikeAltitude, layoutBottomWithin, nextSpikeSpeed, spikeLimit, pickupScore } from '../lib/ballGame';
+import { ballDeformation, ballTouchesCircle, ballTouchesSpike, ballTouchesFlyingSpike, flyingSpikeLimit, flyingSpikeAltitude, layoutBottomWithin, nextSpikeSpeed, spikeLimit, pickupScore } from '../lib/ballGame';
 import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
@@ -82,7 +82,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     const clickRipples: Pop[] = [];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     // Reserve room for the slight horizontal stretch at the edges.
-    const clampX = (value: number) => Math.max(RADIUS * 1.16, Math.min(width - RADIUS * 1.16, value));
+    const clampX = (value: number) => Math.max(RADIUS * 1.32, Math.min(width - RADIUS * 1.32, value));
     const paint = () => {
       ball.style.transform = `translate3d(${x - RADIUS}px, ${height - RADIUS * 2 - altitude}px, 0) scale(${scaleX}, ${scaleY})`;
     };
@@ -157,10 +157,8 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
         vy = 0;
         jumpsUsed = 0;
       }
-      const speed = Math.min(1, Math.abs(vx) / 900);
       const airborne = altitude > 0;
-      const wantedX = reducedMotion.matches ? 1 : airborne ? 0.88 : 1 + speed * 0.14;
-      const wantedY = reducedMotion.matches ? 1 : airborne ? 1.12 : 1 - speed * 0.16;
+      const { x: wantedX, y: wantedY } = ballDeformation(vx, airborne, reducedMotion.matches);
       scaleX += (wantedX - scaleX) * Math.min(1, dt * 20);
       scaleY += (wantedY - scaleY) * Math.min(1, dt * 20);
       paint();
@@ -257,7 +255,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           element.setAttribute('aria-hidden', 'true');
           foreground.append(element);
           spikes.push({ element, x: -SPIKE_HEIGHT / 2, speed: nextSpikeSpeed(spikes.at(-1)?.speed ?? 160),
-            altitude: flyingSpikeAltitude(maxAltitude + RADIUS * 2 * 1.12, SPIKE_WIDTH), flying: true });
+            altitude: flyingSpikeAltitude(maxAltitude + RADIUS * 2 * 1.32, SPIKE_WIDTH), flying: true });
           untilFlyingSpike = 2.4 + Math.random();
         }
       } else untilFlyingSpike = 0;
@@ -265,7 +263,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       for (let i = spikes.length - 1; i >= 0; i--) {
         const spike = spikes[i];
         spike.x += (spike.flying ? 1 : -1) * spike.speed * dt;
-        spike.altitude = spike.flying ? Math.min(spike.altitude, maxAltitude + RADIUS * 2 * 1.12 - SPIKE_WIDTH / 2 - 3) : 0;
+        spike.altitude = spike.flying ? Math.min(spike.altitude, maxAltitude + RADIUS * 2 * 1.32 - SPIKE_WIDTH / 2 - 3) : 0;
         spike.element.style.transform = spike.flying
           ? `translate3d(${spike.x - SPIKE_HEIGHT / 2}px, ${height - spike.altitude - SPIKE_WIDTH / 2}px, 0)`
           : `translate3d(${spike.x - SPIKE_WIDTH / 2}px, ${height - SPIKE_HEIGHT}px, 0)`;
@@ -419,7 +417,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       const cards = Array.from(area.querySelectorAll<HTMLElement>('.project-card'));
       const cardsBottom = Math.max(...cards.map(card => layoutBottomWithin(card, area)));
       // The top of the stretched ball stops just below the lowest card edge.
-      maxAltitude = cards.length ? Math.max(0, height - cardsBottom - RADIUS * 2 * 1.12 - 4) : 0;
+      maxAltitude = cards.length ? Math.max(0, height - cardsBottom - RADIUS * 2 * 1.32 - 4) : 0;
       altitude = Math.min(altitude, maxAltitude);
       pickups.forEach(pickup => { pickup.x = Math.min(width - PICKUP_SIZE, pickup.x); });
       paint();
