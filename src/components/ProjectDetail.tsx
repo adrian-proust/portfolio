@@ -119,7 +119,9 @@ export default function ProjectDetail({ project, onBack }: Props) {
                 <source src={mediaSrc(project.overviewVideo.src)} type="video/mp4" />
               </video>
             </div>
-            <p className="project-detail__video-description">{project.overviewVideo.description}</p>
+            {project.overviewVideo.description.split('\n\n').map((paragraph, index) => (
+              <p key={index} className="project-detail__video-description">{paragraph}</p>
+            ))}
           </div>}
 
           {project.highlights && project.highlights.length > 0 && (

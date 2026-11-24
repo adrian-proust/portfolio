@@ -87,7 +87,7 @@ export const socials: SocialLink[] = [
 export const about = {
   lead: 'Trilingual Game Design Enthusiast',
   paragraphs: [
-    'This portfolio offers a glimpse into the creative thinking I have explored in recent years across different projects and fields.',
+    "Hi! I'm Adrian and I hope your having fun checking out my portfolio. This website offers a glimpse into the creative thinking I have explored in recent years across different projects and fields.",
     'Whether in video games or live events, I cannot help but take a fresh, critical look at the games I create or play.',
     'These seemingly varied perspectives converge on a single goal: to offer new video game experiences shaped by a sense of freedom.',
   ],
@@ -568,7 +568,9 @@ export const projects: Project[] = [
     overviewVideo: {
       title: 'Live adaptative economy diagram',
       src: '/projects/sang-machinations-economy.mp4',
-      description: 'This Machinations simulation models the gameplay economy: spending health to shoot, recovering blood from defeated enemies and triggering a temporary frenzy above 100% health.',
+      description: `After creating and testing the first iteration of Sang%, we quickly realized that the core gameplay loop (health = ammo & kills = healing) was simply boring. Players kept their health close to 100% at all times and avoided taking any risks, resulting in a particularly slow pace. We also realized how difficult it would be to balance danger, enemy waves, and health consumption within our limited timeframe.
+
+To address this, I had the pleasure of working with Machinations.io’s interactive game economy diagrams. These diagrams make it easy to visualize and adjust a game’s economy to meet specific design goals. We could simulate changes in our main resource in real time based on parameters such as player accuracy and risk-taking (see the sliders in the top-right corner). We refined this model throughout production, which helped us conceptualize comeback mechanics and rewards for taking risks, and, above all, fine-tune the equations governing resource distribution.`,
     },
     presentations: [
       presentation('Idea pitchdeck', '2PACX-1vSKHFSCpA0x_DqSgkR9J2vQrpTzF0c4Vm-UwEiXkWLqKo4AyzKfO114z9viLrJSywjPD9YuyweDT24H', 5000),
