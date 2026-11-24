@@ -112,6 +112,16 @@ export default function ProjectDetail({ project, onBack }: Props) {
             </div>
           )}
 
+          {project.overviewVideo && <div className="project-detail__section">
+            <h2 className="display-sm project-detail__section-title">{project.overviewVideo.title}</h2>
+            <div className="project-detail__gallery">
+              <video key={project.overviewVideo.src} controls playsInline autoPlay loop muted preload="metadata" aria-label={project.overviewVideo.title}>
+                <source src={mediaSrc(project.overviewVideo.src)} type="video/mp4" />
+              </video>
+            </div>
+            <p className="project-detail__video-description">{project.overviewVideo.description}</p>
+          </div>}
+
           {project.highlights && project.highlights.length > 0 && (
             <div className="project-detail__section">
               <h2 className="display-sm project-detail__section-title">My Contributions</h2>

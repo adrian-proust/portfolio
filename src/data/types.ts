@@ -18,10 +18,12 @@ export type Project = {
   role: string; // e.g. "Intern / Freelance"
   tags: string[]; // e.g. ["Game Design", "Multiplayer"]
   category: ProjectCategory;
+  hidden?: boolean;
   description: string;
   image: string; // path under public/, e.g. "/projects/tidebound.svg"
   imageAlt: string;
   longDescription?: string[];
+  overviewVideo?: { title: string; src: string; description: string };
   highlights?: string[];
   medium?: string;
   presentations?: Presentation[];

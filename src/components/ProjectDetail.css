@@ -272,3 +272,4 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+.project-detail__video-description { margin-top: 1rem; color: var(--muted); line-height: 1.7; }

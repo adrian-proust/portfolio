@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function Hero({ onSelectProject, onDefeat }: Props) {
-  const latestProjects = projects.slice(0, RECENT_PROJECTS_COUNT);
+  const latestProjects = projects.filter(project => !project.hidden).slice(0, RECENT_PROJECTS_COUNT);
   const enabled = useMiniGamesEnabled();
   const { unlocked } = useGameUpgrades();
   const [score, setScore] = useState(0);

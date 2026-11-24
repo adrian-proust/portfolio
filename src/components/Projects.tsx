@@ -25,7 +25,7 @@ export default function Projects({ onSelectProject, onMiss }: Props) {
   const missTarget = useCallback((score: number) => { setGameScore(0); onMiss(score); }, [onMiss]);
   const [filter, setFilter] = useState<ProjectCategory>(filters[0]);
   const visible = useMemo(
-    () => projects.filter((p) => p.category === filter),
+    () => projects.filter((p) => !p.hidden && p.category === filter),
     [filter],
   );
   useReveal([filter]);
@@ -61,7 +61,7 @@ export default function Projects({ onSelectProject, onMiss }: Props) {
             >
               {f}
               <span className="mono filter__count">
-                {projects.filter((p) => p.category === f).length}
+                {projects.filter((p) => !p.hidden && p.category === f).length}
               </span>
             </button>
           ))}

@@ -23,7 +23,7 @@ export const designShowcase: DesignShowcaseItem[] = [
   {
     projectId: 'hansel-gretel',
     title: 'Hansel & Gretel GO — One Page Design',
-    description: 'The Silent tile: a one-page design explaining its rules, stealth interactions and impact on the witch’s behaviour.',
+    description: 'A one-page design for a new mechanic concept and its level layout, explaining its rules and behaviours.',
     image: '/showcase/hansel-gretel-one-page.png',
     imageAlt: 'First slide of One Page Designs: the Silent tile mechanic for Hansel & Gretel GO',
   },
@@ -559,24 +559,23 @@ export const projects: Project[] = [
   },
   {
     id: 'sang-pourcent',
+    trailer: {
+      title: 'Sang% — Gameplay',
+      src: 'https://video.wixstatic.com/video/4ecbbb_67845c170b5641398ec7be45913f3be1/720p/mp4/file.mp4',
+      poster: '/projects/sang-pourcent.png',
+      featured: true,
+    },
+    overviewVideo: {
+      title: 'Live adaptative economy diagram',
+      src: '/projects/sang-machinations-economy.mp4',
+      description: 'This Machinations simulation models the gameplay economy: spending health to shoot, recovering blood from defeated enemies and triggering a temporary frenzy above 100% health.',
+    },
     presentations: [
       presentation('Idea pitchdeck', '2PACX-1vSKHFSCpA0x_DqSgkR9J2vQrpTzF0c4Vm-UwEiXkWLqKo4AyzKfO114z9viLrJSywjPD9YuyweDT24H', 5000),
       presentation('Demo presentation', '2PACX-1vR39hCyogFZkdR8BPx-BH76KUlKJgaK7aB_Skkss4U2Cnzpw3PSI1scWTOt6QGGvMB4dUf80bEGSsGJ', 5000, true),
       presentation('Behaviour Design', '2PACX-1vSYI9yOml6COpsm91CqCMy1aSzEy1RTsmPEqCdVPov64fZBjMdJE7AFu1WImEiTMnVfE_X0iK3_SdTk', 5000, true),
     ],
     media: [
-      {
-        "type": "video",
-        "src": "https://video.wixstatic.com/video/4ecbbb_67845c170b5641398ec7be45913f3be1/720p/mp4/file.mp4",
-        "alt": "sang-pourcent gameplay video",
-        "poster": "https://static.wixstatic.com/media/4ecbbb_67845c170b5641398ec7be45913f3be1f000.jpg"
-      },
-      {
-        "type": "image",
-        "src": "https://static.wixstatic.com/media/4ecbbb_45077de147604d948c06dff7edab681c~mv2.gif",
-        "alt": "Dynamic diagram simulating the resources in the gameplay loop. Created with Machinations.io.",
-        "caption": "Dynamic diagram simulating the resources in the gameplay loop. Created with Machinations.io."
-      },
       {
         "type": "image",
         "src": "https://static.wixstatic.com/media/4ecbbb_8977e17a487645c3ba394038c4bfda83~mv2.png",
@@ -824,6 +823,7 @@ export const projects: Project[] = [
   },
   {
     id: '2048',
+    hidden: true,
     media: [
       {
         "type": "video",
