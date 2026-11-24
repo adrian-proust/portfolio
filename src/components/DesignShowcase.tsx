@@ -43,7 +43,7 @@ export default function DesignShowcase({ onSelectProject }: { onSelectProject: (
           if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault();
           onSelectProject(project);
-        }}>Explore {project.title} <span aria-hidden="true">→</span></a>
+        }}>Explore {project.title} for more details <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </section>
