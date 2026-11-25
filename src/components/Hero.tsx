@@ -40,6 +40,10 @@ export default function Hero({ onSelectProject, onDefeat }: Props) {
                 ))}
               </span>
             </p>
+            <div className="hero__scroll hero__scroll--inline mono">
+              <span className="hero__scroll-line" aria-hidden="true" />
+              <span>{homeProjects.scrollHint}</span>
+            </div>
           </div>
           {enabled && <GameScore score={score} game="ball" />}
         </div>

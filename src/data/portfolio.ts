@@ -119,7 +119,7 @@ export const projectCategories: { id: ProjectCategory; blurb: string }[] = [
   { id: 'Personal', blurb: 'Prototypes, game jams and personal experiments' },
 ];
 
-export const homeProjects = { title: 'Latest projects' };
+export const homeProjects = { title: 'Latest projects', scrollHint: 'Scroll down' };
 
 const presentation = (title: string, id: string, delay: number, start = false): Presentation => {
   const base = `https://docs.google.com/presentation/d/e/${id}`;

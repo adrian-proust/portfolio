@@ -187,10 +187,14 @@
 .recent__header {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1.5rem;
   margin-bottom: 2rem;
+}
+
+.recent__header > .game-score {
+  margin-top: 0.75rem;
 }
 
 .recent__title-block {
