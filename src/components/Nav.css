@@ -111,6 +111,16 @@
   height: 17px;
 }
 
+.nav__resume {
+  width: auto;
+  padding-inline: 0.9rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .nav__toggle {
   display: none;
   width: 44px;

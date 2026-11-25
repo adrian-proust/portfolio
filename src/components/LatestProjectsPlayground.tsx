@@ -51,6 +51,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     const home = area?.closest<HTMLElement>('#Home');
     const foreground = ball?.parentElement;
     if (!enabled || !area || !ball || !hint || !effects || !home || !foreground) return;
+    const projectsBanner = document.querySelector<HTMLElement>('#Projects > .marquee');
 
     let width = area.clientWidth;
     let height = area.clientHeight;
@@ -437,8 +438,16 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
     if (grid) resize.observe(grid);
     area.addEventListener('pointermove', move);
     area.addEventListener('pointerdown', press);
-    const leave = () => { release(); hint.hidden = true; };
+    const leave = (event: Event) => {
+      const next = (event as PointerEvent).relatedTarget;
+      if (next instanceof Node && (area.contains(next) || projectsBanner?.contains(next))) return;
+      release();
+      hint.hidden = true;
+    };
     area.addEventListener('pointerleave', leave);
+    projectsBanner?.addEventListener('pointermove', move);
+    projectsBanner?.addEventListener('pointerdown', press);
+    projectsBanner?.addEventListener('pointerleave', leave);
     window.addEventListener('pointerup', release);
     window.addEventListener('pointercancel', release);
     window.addEventListener('blur', leave);
@@ -486,6 +495,9 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       area.removeEventListener('pointermove', move);
       area.removeEventListener('pointerdown', press);
       area.removeEventListener('pointerleave', leave);
+      projectsBanner?.removeEventListener('pointermove', move);
+      projectsBanner?.removeEventListener('pointerdown', press);
+      projectsBanner?.removeEventListener('pointerleave', leave);
       window.removeEventListener('pointerup', release);
       window.removeEventListener('pointercancel', release);
       window.removeEventListener('blur', leave);

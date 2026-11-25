@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useGameUpgrades } from '../hooks/useGameUpgrades';
+import { useUpgradeAnnouncement } from '../hooks/useUpgradeDiscovery';
 import type { Project, ProjectCategory } from '../data/types';
 import { projectCategories, projects } from '../data/portfolio';
 import { useReveal } from '../hooks/useReveal';
@@ -15,11 +16,14 @@ const filters = projectCategories.map((category) => category.id);
 type Props = {
   onSelectProject?: (project: Project) => void;
   onMiss: (score: number) => void;
+  studentVisited: boolean;
+  onStudentVisit: () => void;
 };
 
-export default function Projects({ onSelectProject, onMiss }: Props) {
+export default function Projects({ onSelectProject, onMiss, studentVisited, onStudentVisit }: Props) {
   const { unlocked } = useGameUpgrades();
   const miniGamesEnabled = useMiniGamesEnabled();
+  const announcement = useUpgradeAnnouncement();
   const [gameScore, setGameScore] = useState(0);
   const hitTarget = useCallback(() => setGameScore(score => score + 1), []);
   const missTarget = useCallback((score: number) => { setGameScore(0); onMiss(score); }, [onMiss]);
@@ -55,9 +59,9 @@ export default function Projects({ onSelectProject, onMiss }: Props) {
           {filters.map((f) => (
             <button
               key={f}
-              className={`filter ${filter === f ? 'is-active' : ''}`}
+              className={`filter ${filter === f ? 'is-active' : ''}${f === 'Student' && announcement === 'selected-work' && filter !== 'Student' && !studentVisited ? ' filter--upgrade-hint' : ''}`}
               aria-pressed={filter === f}
-              onClick={() => setFilter(f)}
+              onClick={() => { setFilter(f); if (f === 'Student') onStudentVisit(); }}
             >
               {f}
               <span className="mono filter__count">

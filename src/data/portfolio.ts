@@ -44,6 +44,8 @@ export const gameUpgrades = [
 ];
 
 export const gameResetLabel = 'Reset upgrades & high scores';
+export const resumeLink = { label: 'My resume', path: '/Adrian_Proust_CV_EN.pdf' };
+export const secondarySkillsLabel = 'Tools';
 export const upgradeNotice = {
   message: 'Need a little help? Check out my projects for upgrades!',
   closeLabel: 'Close upgrade tip',

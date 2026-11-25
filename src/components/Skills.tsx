@@ -1,4 +1,4 @@
-import { secondarySkills, skills } from '../data/portfolio';
+import { secondarySkills, secondarySkillsLabel, skills } from '../data/portfolio';
 import SectionLabel from './SectionLabel';
 import './Skills.css';
 
@@ -18,7 +18,7 @@ export default function Skills() {
         </ol>
 
         <div className="skills__secondary reveal">
-          <h3 className="label">Beyond game design</h3>
+          <h3 className="label">{secondarySkillsLabel}</h3>
           <ul className="chips chips--lg">
             {secondarySkills.map((skill) => (
               <li className="chip" key={skill}>

@@ -39,10 +39,6 @@
   -webkit-text-stroke-color: var(--muted);
 }
 
-.marquee:hover .marquee__track {
-  animation-play-state: paused;
-}
-
 @keyframes marquee {
   from {
     transform: translateX(0);

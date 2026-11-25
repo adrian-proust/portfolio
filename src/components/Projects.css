@@ -55,6 +55,16 @@
   border-color: var(--accent);
 }
 
+.filter.filter--upgrade-hint {
+  border-color: #9A275A;
+  box-shadow: 0 0 18px 3px #9A275A80, 0 0 38px #9A275A45;
+  animation: student-upgrade-glow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes student-upgrade-glow {
+  to { box-shadow: 0 0 26px 6px #9A275Aa0, 0 0 50px #9A275A65; }
+}
+
 .filter:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 4px;

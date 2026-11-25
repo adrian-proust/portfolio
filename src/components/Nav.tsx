@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { MouseEvent } from 'react';
 import type { NavSection, SectionId } from '../data/types';
-import { profile, socials } from '../data/portfolio';
+import { profile, socials, resumeLink } from '../data/portfolio';
 import SocialIcon from './SocialIcon';
 import './Nav.css';
 
@@ -52,6 +52,11 @@ export default function Nav({ sections, active, onNavigate }: Props) {
         ))}
       </nav>
       <ul className="nav__socials">
+        <li>
+          <a className="nav__social nav__resume mono" href={`${import.meta.env.BASE_URL}${resumeLink.path.slice(1)}`} target="_blank" rel="noreferrer">
+            {resumeLink.label}
+          </a>
+        </li>
         {socials.map((social) => (
           <li key={social.label}>
             <a

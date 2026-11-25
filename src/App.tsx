@@ -20,6 +20,7 @@ export default function App() {
   const [noticeGame, setNoticeGame] = useState<MiniGame | null>(null);
   const selectedMissesRef = useRef(0);
   const selectedHelpShownRef = useRef(false);
+  const [studentVisited, setStudentVisited] = useState(false);
   const [selectedDiscovered, setSelectedDiscovered] = useState(() => {
     try { return localStorage.getItem(SELECTED_DISCOVERY_KEY) === 'true'; } catch { return false; }
   });
@@ -73,7 +74,7 @@ export default function App() {
         ) : (
           <>
             <Hero onNavigate={navigate} onSelectProject={handleSelectProject} onDefeat={onDefeat} />
-            <Projects onSelectProject={handleSelectProject} onMiss={onSelectedMiss} />
+            <Projects onSelectProject={handleSelectProject} onMiss={onSelectedMiss} studentVisited={studentVisited} onStudentVisit={() => setStudentVisited(true)} />
             <About onSelectProject={handleSelectProject} />
           </>
         )}

@@ -117,12 +117,16 @@ export function useSectionRouting(ids: readonly SectionId[]) {
   const closeProject = useCallback(() => {
     const url = new URL(window.location.href);
     url.searchParams.delete(PROJECT_PARAM);
-    const currentPage = readPage(ids) ?? ids[0];
-    url.searchParams.set(PAGE_PARAM, currentPage);
-    history.pushState({ page: currentPage }, '', url);
+    url.searchParams.set(PAGE_PARAM, 'Projects');
+    history.pushState({ page: 'Projects' }, '', url);
 
     setActiveProjectId(null);
-  }, [ids]);
+    setActive('Projects');
+    // Wait for the home sections to mount again before locating Selected work.
+    requestAnimationFrame(() => {
+      document.getElementById('Projects')?.scrollIntoView({ behavior: 'instant' });
+    });
+  }, []);
 
   return { active, navigate, activeProjectId, openProject, closeProject };
 }
