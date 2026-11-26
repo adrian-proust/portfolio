@@ -2,20 +2,6 @@
   margin-top: clamp(2rem, 5vw, 4rem);
 }
 
-.contact__title {
-  margin-block: 1.25rem clamp(2.5rem, 5vw, 4rem);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(3.25rem, 10vw, 9rem);
-  line-height: 0.9;
-  text-transform: uppercase;
-}
-
-.contact__highlight {
-  display: block;
-  white-space: nowrap;
-}
-
 .contact__list {
   border-top: 1px solid var(--line);
 }

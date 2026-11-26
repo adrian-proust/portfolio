@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react';
-import { designShowcase, projects } from '../data/portfolio';
+import { designShowcase, designShowcaseNavigation, projects } from '../data/portfolio';
 import type { Project } from '../data/types';
 import './DesignShowcase.css';
 
@@ -23,27 +23,41 @@ export default function DesignShowcase({ onSelectProject }: { onSelectProject: (
         }
       }}>
       <header className="design-showcase__header reveal">
-        <h2 id="design-showcase-title">Design showcase<span className="title-dot" aria-hidden="true" /></h2>
-        <span className="mono" aria-label={`Design ${index + 1} of ${designShowcase.length}`}>{String(index + 1).padStart(2, '0')} / {String(designShowcase.length).padStart(2, '0')}</span>
+        <h2 id="design-showcase-title">Design showcase</h2>
       </header>
-      <div className="design-showcase__viewer reveal">
-        <button type="button" className="design-showcase__arrow" aria-label="Previous design" onClick={() => move(-1)}>←</button>
-        {item.presentation ? (
-          <iframe key={item.projectId} className="design-showcase__image" src={project.presentations?.[0]?.embedUrl} title={`${project.title} — Presentation`} loading="lazy" allowFullScreen />
-        ) : (
-          <img key={item.image} className="design-showcase__image" src={`${import.meta.env.BASE_URL}${item.image.slice(1)}`} alt={item.imageAlt} loading="lazy" />
-        )}
-        <button type="button" className="design-showcase__arrow" aria-label="Next design" onClick={() => move(1)}>→</button>
-      </div>
-      <div className="design-showcase__caption reveal" aria-live="polite" aria-atomic="true">
-        <div key={item.projectId} className="design-showcase__caption-content">
-        <h3>{item.title}</h3>
-        <p>{item.description}</p>
-        <a className="link-arrow mono" href={`?Page=AboutMe&Project=${project.id}`} onClick={(event) => {
-          if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-          event.preventDefault();
-          onSelectProject(project);
-        }}>Explore {project.title} for more details <span aria-hidden="true">→</span></a>
+      <div className="design-showcase__layout">
+        <div className="design-showcase__viewer reveal">
+          {item.presentation ? (
+            <iframe key={item.projectId} className="design-showcase__image" src={project.presentations?.[0]?.embedUrl} title={`${project.title} - Presentation`} loading="lazy" allowFullScreen />
+          ) : (
+            <img key={item.image} className="design-showcase__image" src={`${import.meta.env.BASE_URL}${item.image.slice(1)}`} alt={item.imageAlt} loading="lazy" />
+          )}
+        </div>
+        <div className="design-showcase__details reveal">
+          <div className="design-showcase__caption" aria-live="polite" aria-atomic="true">
+            <div key={item.projectId} className="design-showcase__caption-content">
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+              <a className="design-showcase__link" href={`?Page=AboutMe&Project=${project.id}`} onClick={(event) => {
+                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                onSelectProject(project);
+              }}>
+                Explore {project.title}
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
+              </a>
+            </div>
+          </div>
+          <div className="design-showcase__controls">
+            <span className="mono design-showcase__count" aria-label={`Design ${index + 1} of ${designShowcase.length}`}>{String(index + 1).padStart(2, '0')} / {String(designShowcase.length).padStart(2, '0')}</span>
+            <div className="design-showcase__arrows">
+              {designShowcaseNavigation.map(({ step, label }) => (
+                <button key={step} type="button" className="design-showcase__arrow" aria-label={label} onClick={() => move(step)}>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" style={{ transform: step === -1 ? 'rotate(180deg)' : undefined }}><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

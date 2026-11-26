@@ -12,6 +12,11 @@ import type {
   SocialLink,
 } from './types';
 
+export const designShowcaseNavigation = [
+  { step: -1, label: 'Previous design' },
+  { step: 1, label: 'Next design' },
+];
+
 export const designShowcase: DesignShowcaseItem[] = [
   {
     projectId: 'sang-pourcent',
@@ -80,6 +85,18 @@ export const contact = {
   phone: '',
 };
 
+export const contactHeading = {
+  intro: "Let's make some",
+  highlight: 'fun art',
+  sphereLabel: 'Play with the orange sphere',
+  hint: 'Move across the headline to nudge the letters with the orange sphere. Arrow keys move it; Enter starts a demonstration.',
+};
+
+export const contactChannels = [
+  { label: 'Email', value: contact.email, href: `mailto:${contact.email}`, external: false },
+  { label: 'LinkedIn', value: contact.linkedin.label, href: contact.linkedin.url, external: true },
+];
+
 // Icon links shown in the top navigation bar.
 export const socials: SocialLink[] = [
   { label: 'LinkedIn', url: contact.linkedin.url, icon: 'linkedin' },
@@ -88,8 +105,11 @@ export const socials: SocialLink[] = [
 
 export const about = {
   lead: 'Trilingual Game Design Enthusiast',
+  contactLabel: 'Get in touch',
+  languagesLabel: 'Spoken languages',
+  sectionNames: { skills: 'Skills', education: 'Education' },
   paragraphs: [
-    "Hi! I'm Adrian and I hope your having fun checking out my portfolio. This website offers a glimpse into the creative thinking I have explored in recent years across different projects and fields.",
+    "Hi! I'm Adrian and I hope you're having fun checking out my portfolio. This website offers a glimpse into the creative thinking I have explored in recent years across different projects and fields.",
     'Whether in video games or live events, I cannot help but take a fresh, critical look at the games I create or play.',
     'These seemingly varied perspectives converge on a single goal: to offer new video game experiences shaped by a sense of freedom.',
   ],

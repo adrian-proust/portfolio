@@ -1,4 +1,5 @@
-import { contact, profile } from '../data/portfolio';
+import { contactChannels, profile } from '../data/portfolio';
+import ContactHeadline from './ContactHeadline';
 import MarqueeBanner from './MarqueeBanner';
 import './Contact.css';
 import { gameResetLabel } from '../data/portfolio';
@@ -6,27 +7,18 @@ import { UPGRADES_KEY } from '../hooks/useGameUpgrades';
 import { UPGRADE_DISCOVERY_KEY, SELECTED_DISCOVERY_KEY } from '../hooks/useUpgradeDiscovery';
 
 export default function Contact() {
-  const channels = [
-    { label: 'Email', value: contact.email, href: `mailto:${contact.email}` },
-    { label: 'LinkedIn', value: contact.linkedin.label, href: contact.linkedin.url },
-  ];
-
   return (
     <footer className="contact">
       <MarqueeBanner text="Contact" />
       <div className="container">
-        <p className="label reveal">Contact</p>
-        <h2 className="contact__title reveal">
-          Let's make some{' '}
-          <span className="contact__highlight accent-outline">fun art.</span>
-        </h2>
+        <ContactHeadline />
         <ul className="contact__list">
-          {channels.map((channel) => (
-            <li className="reveal" key={channel.label}>
+          {contactChannels.map((channel) => (
+            <li key={channel.label}>
               <a
                 className="contact__link"
                 href={channel.href}
-                {...(channel.label === 'LinkedIn' ? { target: '_blank', rel: 'noreferrer' } : {})}
+                {...(channel.external ? { target: '_blank', rel: 'noreferrer' } : {})}
               >
                 <span className="mono contact__kind">{channel.label}</span>
                 <span className="contact__value">{channel.value}</span>

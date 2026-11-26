@@ -1,28 +1,25 @@
-.design-showcase__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.design-showcase__header h2 { font: 400 clamp(1.8rem, 4vw, 3rem)/1.1 var(--font-display); text-transform: uppercase; }
-.design-showcase__header > span { color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
-.design-showcase__viewer { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 1rem; }
-.design-showcase__image { width: 100%; aspect-ratio: 16 / 11; object-fit: contain; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
-.design-showcase__arrow { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--accent); border-radius: 50%; background: transparent; color: var(--accent); font-size: 1.5rem; cursor: pointer; transition: background 150ms, color 150ms; }
-.design-showcase__arrow:hover { background: var(--accent); color: var(--bg); }
+.design-showcase__header h2 { font: 400 clamp(2rem, 4vw, 3rem)/1.1 var(--font-display); text-transform: uppercase; }
+.design-showcase__layout { display: grid; gap: 1.5rem; }
+.design-showcase__viewer { min-width: 0; }
+.design-showcase__image { display: block; width: 100%; height: auto; border: 0; }
+iframe.design-showcase__image { aspect-ratio: 16 / 9; }
+.design-showcase__details { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 2rem; }
+.design-showcase__caption-content { display: grid; gap: 1rem; }
+.design-showcase__caption h3 { font-size: clamp(1.25rem, 2vw, 1.75rem); line-height: 1.3; text-wrap: balance; }
+.design-showcase__caption p { max-width: 70ch; color: rgba(242, 239, 230, .72); line-height: 1.75; }
+.design-showcase__link { display: inline-flex; align-items: center; justify-self: start; gap: .75rem; min-height: 44px; color: var(--ink); text-decoration: underline; text-underline-offset: .3em; transition: color 150ms; }
+.design-showcase__link:hover { color: var(--accent); }
+.design-showcase__controls { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.design-showcase__count { font-size: .8125rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.design-showcase__arrows { display: flex; gap: .5rem; }
+.design-showcase__arrow { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; transition: border-color 150ms, background 150ms, color 150ms; }
+.design-showcase__arrow:hover { border-color: var(--accent); background: var(--accent); color: var(--bg); }
 .design-showcase :is(button, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.design-showcase__caption { display: grid; gap: 0.75rem; }
-.design-showcase__caption h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); }
-.design-showcase__caption p { color: var(--muted); max-width: 80ch; }
-.design-showcase__caption a { justify-self: start; }
-.design-showcase__image { animation: showcase-image-in 450ms var(--ease) both; }
-.design-showcase__caption-content { display: grid; gap: 0.75rem; animation: showcase-caption-in 450ms var(--ease) both; }
-@keyframes showcase-image-in {
-  from { opacity: 0; transform: translateX(var(--showcase-offset)) scale(0.985); }
-  to { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .design-showcase__image { animation: showcase-image-in 350ms var(--ease) both; }
+  @keyframes showcase-image-in { from { transform: translateX(var(--showcase-offset)); } to { transform: none; } }
 }
-@keyframes showcase-caption-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
-}
-@media (max-width: 600px) {
-  .design-showcase__viewer { grid-template-columns: 44px 1fr 44px; gap: 0.5rem; }
-  .design-showcase__image { grid-column: 1 / -1; grid-row: 1; }
-  .design-showcase__arrow { grid-row: 2; }
-  .design-showcase__arrow:last-child { grid-column: 3; }
+@media (max-width: 860px) {
+  .design-showcase__details { grid-template-columns: 1fr; gap: 1.5rem; }
+  .design-showcase__caption p { max-width: 65ch; }
 }

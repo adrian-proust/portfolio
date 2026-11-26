@@ -38,7 +38,7 @@ export default function Nav({ sections, active, onNavigate }: Props) {
         <span className="nav__toggle-bar" />
       </button>
       <nav id="nav-links" className="nav__links" aria-label="Sections">
-        {sections.map((section, i) => (
+        {sections.map((section) => (
           <a
             key={section.id}
             href={`?Page=${section.id}`}
@@ -46,7 +46,6 @@ export default function Nav({ sections, active, onNavigate }: Props) {
             className={`nav__link ${active === section.id ? 'is-active' : ''}`}
             aria-current={active === section.id ? 'page' : undefined}
           >
-            <span className="mono nav__num">{String(i).padStart(2, '0')}</span>
             {section.label}
           </a>
         ))}

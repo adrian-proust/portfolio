@@ -1,0 +1,51 @@
+.education__list {
+  display: grid;
+}
+
+.education__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem clamp(2rem, 6vw, 6rem);
+  padding-block: 2rem;
+}
+
+.education__item + .education__item {
+  border-top: 1px solid var(--line);
+}
+
+.education__qualification,
+.education__context {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.education__degree {
+  max-width: 40ch;
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  font-weight: 600;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.education__school {
+  color: rgba(242, 239, 230, 0.78);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.education__status {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.education__detail {
+  max-width: 65ch;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(242, 239, 230, 0.72);
+}
+
+@media (max-width: 860px) {
+  .education__item { grid-template-columns: 1fr; padding-block: 1.5rem; }
+}
