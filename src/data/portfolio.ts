@@ -50,8 +50,8 @@ export const gameUpgrades = [
 
 export const gameResetLabel = 'Reset upgrades & high scores';
 export const gameScoreContent = {
-  playerLabel: 'Your high score',
-  adrianLabel: 'Adrian high score',
+  playerLabel: 'Your best',
+  adrianLabel: 'Adrian best',
   // Replace these placeholders with Adrian's records for each mini-game.
   adrianHighScores: { ball: 0, 'selected-work': 0 },
 };
@@ -96,6 +96,7 @@ export const contactHeading = {
   highlight: 'fun art',
   sphereLabel: 'Play with the orange sphere',
   hint: 'Move across the headline to nudge the letters with the orange sphere. Arrow keys move it; Enter starts a demonstration.',
+  digitalHint: 'Move the orange sphere into the letter segments to bounce and temporarily switch them off. Arrow keys move it; Enter starts a demonstration.',
 };
 
 export const contactChannels = [

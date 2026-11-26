@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
+import { segmentContact, type Point } from '../lib/digitalLetters';
 
 type Letter = { node: HTMLSpanElement; cx: number; cy: number; x: number; y: number; vx: number; vy: number };
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 /** The orange period becomes a cursor companion, then returns to its place. */
-export function useSphereInteraction() {
+export function useSphereInteraction(digital = false) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const headline = ref.current;
@@ -13,17 +14,27 @@ export function useSphereInteraction() {
     const word = headline.querySelector<HTMLSpanElement>('.contact-headline__word')!;
     const home = headline.querySelector<HTMLSpanElement>('[data-sphere-home]')!;
     const letters: Letter[] = Array.from(headline.querySelectorAll<HTMLSpanElement>('[data-sphere-letter]')).map(node => ({ node, cx: 0, cy: 0, x: 0, y: 0, vx: 0, vy: 0 }));
+    const bars = Array.from(headline.querySelectorAll<SVGPolygonElement>('[data-sphere-segment]')).map(node => ({ node, vertices: [] as Point[], disabledUntil: 0 }));
     const media = matchMedia('(prefers-reduced-motion: no-preference)');
     let frame: number | null = null, previousTime = 0, demoUntil = 0;
     let visible = false, dragging = false;
     let pointer: { x: number; y: number } | null = null;
     let width = 1, height = 1, homeX = 0, homeY = 0;
-    let x = 0, y = 0, vx = 0, vy = 0;
+    let x = 0, y = 0, vx = 0, vy = 0, ballRadius = 9;
     const drawBall = () => { ball.style.left = `${x}px`; ball.style.top = `${y}px`; };
     const measure = () => {
       width = headline.clientWidth; height = headline.clientHeight;
       homeX = word.offsetLeft + home.offsetLeft + home.offsetWidth / 2;
       homeY = word.offsetTop + home.offsetTop + home.offsetHeight / 2;
+      ballRadius = parseFloat(getComputedStyle(ball, '::before').width) / 2;
+      const origin = headline.getBoundingClientRect();
+      for (const bar of bars) {
+        const matrix = bar.node.getScreenCTM();
+        bar.vertices = matrix ? Array.from(bar.node.points).map(point => {
+          const screen = new DOMPoint(point.x, point.y).matrixTransform(matrix);
+          return { x: screen.x - origin.left, y: screen.y - origin.top };
+        }) : [];
+      }
       for (const b of letters) {
         b.cx = word.offsetLeft + b.node.offsetLeft + b.node.offsetWidth / 2;
         b.cy = word.offsetTop + b.node.offsetTop + b.node.offsetHeight / 2;
@@ -34,6 +45,7 @@ export function useSphereInteraction() {
       frame = null; previousTime = demoUntil = 0; pointer = null; dragging = false;
       measure(); x = homeX; y = homeY; vx = vy = 0; drawBall();
       for (const b of letters) { b.x = b.y = b.vx = b.vy = 0; b.node.style.removeProperty('transform'); }
+      for (const bar of bars) { bar.disabledUntil = 0; bar.node.classList.remove('is-disabled', 'is-hit'); }
     };
     const tick = (time: number) => {
       const dt = previousTime ? Math.min((time - previousTime) / 16.667, 1.5) : 1;
@@ -46,8 +58,35 @@ export function useSphereInteraction() {
       }
       vx = (vx + (targetX - x) * .065 * dt) * .8 ** dt;
       vy = (vy + (targetY - y) * .065 * dt) * .8 ** dt;
-      x += vx * dt; y += vy * dt;
+      if (digital) {
+        for (const bar of bars) {
+          if (bar.disabledUntil && time >= bar.disabledUntil) {
+            bar.disabledUntil = 0;
+            bar.node.classList.remove('is-disabled', 'is-hit');
+          }
+        }
+        // Sweep in small steps so quick pointer movements cannot skip a thin bar.
+        const steps = Math.max(1, Math.ceil(Math.hypot(vx, vy) * dt / (ballRadius * 0.6)));
+        for (let step = 0; step < steps; step++) {
+          x += vx * dt / steps; y += vy * dt / steps;
+          if (!active) continue;
+          for (const bar of bars) {
+            if (bar.disabledUntil || bar.vertices.length === 0) continue;
+            const contact = segmentContact(x, y, ballRadius, bar.vertices);
+            if (!contact) continue;
+            x += contact.nx * (contact.depth + 0.5);
+            y += contact.ny * (contact.depth + 0.5);
+            const incoming = vx * contact.nx + vy * contact.ny;
+            const impulse = Math.max(8, -incoming * 1.7);
+            vx += impulse * contact.nx;
+            vy += impulse * contact.ny;
+            bar.disabledUntil = time + 3200;
+            bar.node.classList.add('is-disabled', 'is-hit');
+          }
+        }
+      } else { x += vx * dt; y += vy * dt; }
       let moving = demo || Math.abs(vx) + Math.abs(vy) + Math.abs(targetX-x) + Math.abs(targetY-y) > .12;
+      moving ||= bars.some(bar => bar.disabledUntil > 0);
       const reach = Math.max(75, Math.min(170,word.offsetHeight*.75));
       for (const b of letters) {
         const dx = b.cx - x, dy = b.cy - y, distance = Math.max(1,Math.hypot(dx,dy));
@@ -111,6 +150,6 @@ export function useSphereInteraction() {
       headline.removeEventListener('pointerdown',down); headline.removeEventListener('pointermove',move); headline.removeEventListener('pointerup',release); headline.removeEventListener('pointercancel',release); headline.removeEventListener('pointerleave',leave); headline.removeEventListener('keydown',key);
       ball.removeEventListener('blur',leave); window.removeEventListener('blur',reset); document.removeEventListener('visibilitychange',hidden); document.fonts.removeEventListener('loadingdone',reset); media.removeEventListener('change',reset);
     };
-  },[]);
+  },[digital]);
   return ref;
 }

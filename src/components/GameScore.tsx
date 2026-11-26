@@ -17,7 +17,7 @@ export default function GameScore({ score, game }: { score: number; game: 'ball'
   const highScore = useHighScore(score, game);
   const adrianHighScore = gameScoreContent.adrianHighScores[game];
   return (
-    <output className="game-score" aria-label={`Score: ${score}. ${gameScoreContent.playerLabel}: ${highScore}. ${gameScoreContent.adrianLabel}: ${adrianHighScore}`} aria-live="polite" aria-atomic="true">
+    <output className="game-score" aria-label={`Score: ${score}. ${gameScoreContent.adrianLabel}: ${adrianHighScore}. ${gameScoreContent.playerLabel}: ${highScore}`} aria-live="polite" aria-atomic="true">
       <span className="game-score__digits" key={score} aria-hidden="true">
         {String(score).padStart(3, '0').split('').map((digit, i) => (
           <svg viewBox="0 0 42 76" key={i} className="game-score__digit">
@@ -27,11 +27,13 @@ export default function GameScore({ score, game }: { score: number; game: 'ball'
           </svg>
         ))}
       </span>
-      <span className="game-score__label mono" aria-hidden="true">
-        {gameScoreContent.playerLabel} - <strong>{String(highScore).padStart(3, '0')}</strong>
-      </span>
-      <span className="game-score__label mono" aria-hidden="true">
-        {gameScoreContent.adrianLabel} - <strong>{String(adrianHighScore).padStart(3, '0')}</strong>
+      <span className="game-score__records" aria-hidden="true">
+        <span className="game-score__label mono">
+          {gameScoreContent.adrianLabel} - <strong>{String(adrianHighScore).padStart(3, '0')}</strong>
+        </span>
+        <span className="game-score__label mono">
+          {gameScoreContent.playerLabel} - <strong>{String(highScore).padStart(3, '0')}</strong>
+        </span>
       </span>
     </output>
   );

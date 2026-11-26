@@ -12,6 +12,7 @@ export default function Contact() {
       <MarqueeBanner text="Contact" />
       <div className="container">
         <ContactHeadline />
+        <ContactHeadline digital />
         <ul className="contact__list">
           {contactChannels.map((channel) => (
             <li key={channel.label}>
