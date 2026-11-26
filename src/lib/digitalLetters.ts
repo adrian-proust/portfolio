@@ -9,17 +9,22 @@ const bar = (ax: number, ay: number, bx: number, by: number) => {
 };
 
 export const letterBars: Record<string, string> = {
-  a: bar(4, 6, 38, 6), b: bar(38, 10, 38, 36),
-  c: bar(38, 40, 38, 66), d: bar(4, 70, 38, 70),
+  a1: bar(4, 6, 20, 6), a2: bar(22, 6, 38, 6),
+  b: bar(38, 10, 38, 36), c: bar(38, 40, 38, 66),
+  d1: bar(4, 70, 20, 70), d2: bar(22, 70, 38, 70),
   e: bar(4, 40, 4, 66), f: bar(4, 10, 4, 36),
-  g: bar(4, 38, 38, 38), h: bar(10, 12, 32, 64),
-  i: bar(23, 42, 36, 66), j: bar(21, 12, 21, 36),
-  k: bar(21, 40, 21, 68),
+  g1: bar(4, 38, 20, 38), g2: bar(22, 38, 38, 38),
+  h: bar(10, 12, 18, 32), i: bar(32, 12, 24, 32),
+  j: bar(18, 44, 10, 64), k: bar(24, 44, 32, 64),
+  l: bar(21, 12, 21, 34), m: bar(21, 42, 21, 66),
 };
 export const digitalLetters: Record<string, string[]> = {
-  F: ['a', 'f', 'g', 'e'], U: ['f', 'e', 'd', 'c', 'b'],
-  N: ['f', 'e', 'h', 'b', 'c'], A: ['a', 'b', 'c', 'e', 'f', 'g'],
-  R: ['a', 'b', 'g', 'f', 'e', 'i'], T: ['a', 'j', 'k'],
+  F: ['a1', 'a2', 'f', 'g1', 'g2', 'e'],
+  U: ['f', 'e', 'd1', 'd2', 'c', 'b'],
+  N: ['f', 'e', 'h', 'k', 'b', 'c'],
+  A: ['a1', 'a2', 'b', 'c', 'e', 'f', 'g1', 'g2'],
+  R: ['a1', 'a2', 'b', 'g1', 'g2', 'f', 'e', 'k'],
+  T: ['a1', 'a2', 'l', 'm'],
 };
 
 /** Circle/convex polygon contact, including bevels and balls starting inside a bar. */

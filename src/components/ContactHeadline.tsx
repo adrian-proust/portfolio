@@ -14,7 +14,10 @@ export default function ContactHeadline({ digital = false }: { digital?: boolean
           {Array.from(contactHeading.highlight).map((character, i) => (
             digital ? (character === ' ' ? <span key={i} className="contact-headline__digital-space" /> :
               <svg key={i} className="contact-headline__digital-letter" viewBox="0 0 42 76" aria-hidden="true">
-                {digitalLetters[character.toUpperCase()]?.map(segment => <polygon key={segment} points={letterBars[segment]} data-sphere-segment="" />)}
+                {Object.entries(letterBars).map(([segment, points]) => {
+                  const active = digitalLetters[character.toUpperCase()]?.includes(segment);
+                  return <polygon key={segment} points={points} className={active ? undefined : 'is-unlit'} data-sphere-segment={active ? '' : undefined} />;
+                })}
               </svg>) : <span className="contact-headline__letter" data-sphere-letter={character !== ' ' ? '' : undefined} key={i}>{character}</span>
           ))}
           <span className="contact-headline__period" data-sphere-home />
