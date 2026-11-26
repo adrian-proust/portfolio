@@ -13,13 +13,13 @@ const diagonal = (ax: number, ay: number, bx: number, by: number) =>
   `${ax},${ay - 4} ${ax},${ay + 4} ${bx},${by + 4} ${bx},${by - 4}`;
 
 export const letterBars: Record<string, string> = {
-  a: bar(4, 10, 38, 10),
+  a: bar(4, 11.5, 38, 11.5),
   b: bar(38, 12, 38, 37), c: bar(38, 39, 38, 64),
-  d: bar(4, 66, 38, 66),
+  d: bar(4, 64.5, 38, 64.5),
   e: bar(4, 39, 4, 64), f: bar(4, 12, 4, 37),
   g1: bar(4, 38, 20, 38), g2: bar(22, 38, 38, 38),
-  h: diagonal(8, 20, 17, 30), i: diagonal(34, 20, 25, 30),
-  j: diagonal(17, 46, 8, 56), k: diagonal(25, 46, 34, 56),
+  h: diagonal(9, 20 + 10 / 9, 17, 30), i: diagonal(33, 20 + 10 / 9, 25, 30),
+  j: diagonal(17, 46, 9, 56 - 10 / 9), k: diagonal(25, 46, 33, 56 - 10 / 9),
   l: bar(21, 16, 21, 37), m: bar(21, 39, 21, 60),
 };
 export const digitalLetters: Record<string, string[]> = {
