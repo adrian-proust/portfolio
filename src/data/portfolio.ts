@@ -92,6 +92,7 @@ export const contact = {
 };
 
 export const contactHeading = {
+  digitalSlots: 10,
   intro: "Let's make some",
   highlight: 'fun art',
   sphereLabel: 'Play with the orange sphere',

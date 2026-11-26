@@ -6,13 +6,14 @@ import './ContactHeadline.css';
 export default function ContactHeadline({ digital = false }: { digital?: boolean }) {
   const headlineRef = useSphereInteraction(digital);
   const hintId = digital ? 'contact-digital-hint' : 'contact-headline-hint';
+  const characters = Array.from(digital ? contactHeading.highlight.padStart(contactHeading.digitalSlots, ' ') : contactHeading.highlight);
   return (
     <div ref={headlineRef} className={`contact-headline${digital ? ' contact-headline--digital' : ''}`}>
       <h2 aria-label={`${contactHeading.intro} ${contactHeading.highlight}.`}>
         <span className="contact-headline__intro" aria-hidden="true">{contactHeading.intro}</span>
         <span className="contact-headline__word" aria-hidden="true">
-          {Array.from(contactHeading.highlight).map((character, i) => (
-            digital ? (character === ' ' ? <span key={i} className="contact-headline__digital-space" /> :
+          {characters.map((character, i) => (
+            digital ? (
               <svg key={i} className="contact-headline__digital-letter" viewBox="0 0 42 76" aria-hidden="true">
                 {Object.entries(letterBars).map(([segment, points]) => {
                   const active = digitalLetters[character.toUpperCase()]?.includes(segment);

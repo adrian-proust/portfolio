@@ -71,10 +71,9 @@
 }
 
 .contact-headline__ball:active { cursor: grabbing; }
-.contact-headline--digital .contact-headline__word { display: flex; align-items: flex-end; gap: 0.045em; padding-bottom: 0.2em; }
-.contact-headline__digital-letter { flex: 0 1 auto; width: 0.49em; height: 0.89em; overflow: visible; }
-.contact-headline__digital-space { flex: 0 0 0.2em; }
-.contact-headline--digital .contact-headline__period { flex: 0 0 0.13em; margin-bottom: 0.02em; }
+.contact-headline--digital .contact-headline__word { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); align-items: end; gap: clamp(3px, 0.6vw, 10px); padding-right: 0.16em; padding-bottom: 0.2em; }
+.contact-headline__digital-letter { width: 100%; height: auto; aspect-ratio: 42 / 76; overflow: visible; }
+.contact-headline--digital .contact-headline__period { position: absolute; right: 0; bottom: 0.2em; margin: 0; width: 0.1em; height: 0.1em; }
 .contact-headline__digital-letter polygon { fill: var(--accent); }
 .contact-headline__digital-letter polygon.is-unlit { fill: color-mix(in srgb, var(--accent) 9%, var(--bg)); }
 .contact-headline__digital-letter polygon.is-disabled { fill: #2c2c29; }
