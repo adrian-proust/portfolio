@@ -8,15 +8,19 @@ const bar = (ax: number, ay: number, bx: number, by: number) => {
     .map(([along, across]) => `${ax + ux * along - uy * across},${ay + uy * along + ux * across}`).join(' ');
 };
 
+// Diagonals have four corners and parallel horizontal ends, without bevels.
+const diagonal = (ax: number, ay: number, bx: number, by: number) =>
+  `${ax - 2},${ay} ${ax + 2},${ay} ${bx + 2},${by} ${bx - 2},${by}`;
+
 export const letterBars: Record<string, string> = {
-  a: bar(4, 6, 38, 6),
-  b: bar(38, 10, 38, 36), c: bar(38, 40, 38, 66),
-  d: bar(4, 70, 38, 70),
-  e: bar(4, 40, 4, 66), f: bar(4, 10, 4, 36),
+  a: bar(4, 10, 38, 10),
+  b: bar(38, 12, 38, 37), c: bar(38, 39, 38, 64),
+  d: bar(4, 66, 38, 66),
+  e: bar(4, 39, 4, 64), f: bar(4, 12, 4, 37),
   g1: bar(4, 38, 20, 38), g2: bar(22, 38, 38, 38),
-  h: bar(10, 12, 18, 32), i: bar(32, 12, 24, 32),
-  j: bar(18, 44, 10, 64), k: bar(24, 44, 32, 64),
-  l: bar(21, 12, 21, 34), m: bar(21, 42, 21, 66),
+  h: diagonal(9, 16, 18, 33), i: diagonal(33, 16, 24, 33),
+  j: diagonal(18, 43, 9, 60), k: diagonal(24, 43, 33, 60),
+  l: bar(21, 16, 21, 37), m: bar(21, 39, 21, 60),
 };
 export const digitalLetters: Record<string, string[]> = {
   F: ['a', 'f', 'g1', 'g2', 'e'],
