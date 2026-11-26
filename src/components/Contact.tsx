@@ -11,7 +11,6 @@ export default function Contact() {
     <footer className="contact">
       <MarqueeBanner text="Contact" />
       <div className="container">
-        <ContactHeadline />
         <ContactHeadline digital />
         <ul className="contact__list">
           {contactChannels.map((channel) => (

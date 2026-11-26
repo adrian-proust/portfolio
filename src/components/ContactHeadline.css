@@ -75,14 +75,14 @@
 .contact-headline__digital-letter { width: 100%; height: auto; aspect-ratio: 42 / 76; overflow: visible; }
 .contact-headline--digital .contact-headline__period { position: absolute; right: 0; bottom: 0.2em; margin: 0; width: 0.1em; height: 0.1em; }
 .contact-headline__digital-letter polygon { fill: var(--accent); }
-.contact-headline__digital-letter polygon.is-unlit { fill: color-mix(in srgb, var(--accent) 9%, var(--bg)); }
-.contact-headline__digital-letter polygon.is-disabled { fill: #2c2c29; }
+.contact-headline__digital-letter polygon.is-unlit,
+.contact-headline__digital-letter polygon.is-disabled { fill: color-mix(in srgb, var(--accent) 9%, var(--bg)); }
 .contact-headline__digital-letter polygon.is-hit { animation: digital-bar-hit 360ms steps(2, end); }
 @keyframes digital-bar-hit {
   0% { fill: var(--accent); opacity: 0.35; transform: translateY(3px); }
   35% { fill: var(--accent); opacity: 1; transform: translateX(2px); filter: brightness(1.6); }
   65% { fill: var(--accent); opacity: 0.6; transform: translateX(-1px); }
-  100% { fill: #2c2c29; opacity: 1; transform: none; filter: none; }
+  100% { fill: color-mix(in srgb, var(--accent) 9%, var(--bg)); opacity: 1; transform: none; filter: none; }
 }
 .contact-headline__ball:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 

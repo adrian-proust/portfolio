@@ -29,6 +29,11 @@ export const digitalLetters: Record<string, string[]> = {
   A: ['a', 'b', 'c', 'e', 'f', 'g1', 'g2'],
   R: ['a', 'b', 'g1', 'g2', 'f', 'e', 'k'],
   T: ['a', 'l', 'm'],
+  C: ['a', 'f', 'e', 'd'], O: ['a', 'b', 'c', 'd', 'e', 'f'],
+  L: ['f', 'e', 'd'], G: ['a', 'f', 'e', 'd', 'c', 'g2'],
+  M: ['f', 'e', 'b', 'c', 'h', 'i'], E: ['a', 'f', 'g1', 'g2', 'e', 'd'],
+  W: ['f', 'e', 'b', 'c', 'j', 'k'], D: ['a', 'b', 'c', 'd', 'e', 'f'],
+  S: ['a', 'f', 'g1', 'g2', 'c', 'd'], I: ['a', 'd', 'l', 'm'],
 };
 
 /** Circle/convex polygon contact, including bevels and balls starting inside a bar. */

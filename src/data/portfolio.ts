@@ -95,9 +95,10 @@ export const contactHeading = {
   digitalSlots: 10,
   intro: "Let's make some",
   highlight: 'fun art',
+  phrases: ['FUN ART', 'COOL GAME', 'NEW DESIGN'],
   sphereLabel: 'Play with the orange sphere',
   hint: 'Move across the headline to nudge the letters with the orange sphere. Arrow keys move it; Enter starts a demonstration.',
-  digitalHint: 'Move the orange sphere into the letter segments to bounce and temporarily switch them off. Arrow keys move it; Enter starts a demonstration.',
+  digitalHint: 'Move the orange sphere into the letter segments to bounce and switch them off. Clear every lit segment to reveal the next phrase. Arrow keys move the sphere; Enter starts a demonstration.',
 };
 
 export const contactChannels = [
