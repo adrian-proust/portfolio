@@ -50,7 +50,7 @@ export default function Projects({ onSelectProject, onMiss, studentVisited, onSt
         <div className="projects__header reveal">
           <h2 className="display-lg">
             Selected <br />
-            work<span className="accent">.</span>
+            work
           </h2>
           {miniGamesEnabled && <GameScore score={gameScore} game="selected-work" />}
         </div>

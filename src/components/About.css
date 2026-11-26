@@ -7,7 +7,8 @@
 .about__text { max-width: 65ch; font-size: clamp(1rem, 1.3vw, 1.125rem); line-height: 1.75; color: rgba(242, 239, 230, .78); }
 .about__text:first-child { color: var(--ink); font-size: clamp(1.125rem, 1.6vw, 1.375rem); line-height: 1.6; }
 .about__actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; margin-top: .5rem; }
-.about__actions .button { gap: 1.25rem; min-height: 48px; }
+.about__actions .button { gap: 1.25rem; min-height: 48px; border: 1px solid var(--accent); background: var(--bg); color: var(--accent); transition: transform 0.3s var(--ease), background 0.3s, color 0.3s; }
+.about__actions .button:hover { background: var(--accent); color: var(--bg); }
 .about__contact { display: inline-flex; align-items: center; min-height: 48px; text-decoration: underline; text-underline-offset: .3em; transition: color 150ms; }
 .about__contact:hover { color: var(--accent); }
 .about__languages { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-top: .25rem; font-size: .875rem; color: var(--muted); }
