@@ -8,16 +8,9 @@ const bar = (ax: number, ay: number, bx: number, by: number) => {
     .map(([along, across]) => `${ax + ux * along - uy * across},${ay + uy * along + ux * across}`).join(' ');
 };
 
-// Diagonals have four corners and parallel horizontal ends, without bevels.
-const diagonal = (ax: number, ay: number, bx: number, by: number, outer: 'start' | 'end') => {
-  // Retract the outer end along its axis to clear the neighbouring upright.
-  // Keeping the same axis and horizontal cuts preserves the parallelogram.
-  const length = Math.hypot(bx - ax, by - ay);
-  const dx = (bx - ax) / length * 5, dy = (by - ay) / length * 5;
-  if (outer === 'start') { ax += dx; ay += dy; }
-  else { bx -= dx; by -= dy; }
-  return `${ax - 2},${ay} ${ax + 2},${ay} ${bx + 2},${by} ${bx - 2},${by}`;
-};
+// Equal vertical end cuts make both pairs of opposite sides parallel.
+const diagonal = (ax: number, ay: number, bx: number, by: number) =>
+  `${ax},${ay - 4} ${ax},${ay + 4} ${bx},${by + 4} ${bx},${by - 4}`;
 
 export const letterBars: Record<string, string> = {
   a: bar(4, 10, 38, 10),
@@ -25,8 +18,8 @@ export const letterBars: Record<string, string> = {
   d: bar(4, 66, 38, 66),
   e: bar(4, 39, 4, 64), f: bar(4, 12, 4, 37),
   g1: bar(4, 38, 20, 38), g2: bar(22, 38, 38, 38),
-  h: diagonal(9, 16, 18, 33, 'start'), i: diagonal(33, 16, 24, 33, 'start'),
-  j: diagonal(18, 43, 9, 60, 'end'), k: diagonal(24, 43, 33, 60, 'end'),
+  h: diagonal(8, 20, 17, 30), i: diagonal(34, 20, 25, 30),
+  j: diagonal(17, 46, 8, 56), k: diagonal(25, 46, 34, 56),
   l: bar(21, 16, 21, 37), m: bar(21, 39, 21, 60),
 };
 export const digitalLetters: Record<string, string[]> = {
