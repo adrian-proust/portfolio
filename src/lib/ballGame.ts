@@ -1,3 +1,19 @@
+export const BALL_SPAWN_RATIO = 0.18;
+export const BALL_SPAWN_CLEARANCE = 48;
+
+/** Sample both sides of the spawn lane without dropping pickups onto the idle ball. */
+export function pickupSpawnX(width: number, random = Math.random()) {
+  const min = 18;
+  const max = Math.max(min, width - 18);
+  const spawn = width * BALL_SPAWN_RATIO;
+  const leftEnd = Math.max(min, Math.min(max, spawn - BALL_SPAWN_CLEARANCE));
+  const rightStart = Math.max(min, Math.min(max, spawn + BALL_SPAWN_CLEARANCE));
+  const leftLength = leftEnd - min;
+  const rightLength = max - rightStart;
+  const offset = Math.max(0, Math.min(1, random)) * (leftLength + rightLength);
+  return offset < leftLength ? min + offset : rightStart + offset - leftLength;
+}
+
 /** Rounded collision bounds follow both the ball's squash and the circular pickup. */
 export function ballTouchesCircle(
   ballX: number, ballY: number, radiusX: number, radiusY: number,

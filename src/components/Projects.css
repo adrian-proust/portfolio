@@ -76,17 +76,6 @@
   color: var(--bg);
 }
 
-.filter__count {
-  display: grid;
-  place-items: center;
-  min-width: 2rem;
-  height: 2rem;
-  padding-inline: 0.5rem;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-size: 0.85rem;
-}
-
 @media (max-width: 600px) {
   .filters {
     grid-template-columns: 1fr;

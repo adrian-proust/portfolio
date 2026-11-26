@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
-import { ballDeformation, ballTouchesCircle, ballTouchesSpike, ballTouchesFlyingSpike, flyingSpikeLimit, flyingSpikeAltitude, layoutBottomWithin, nextSpikeSpeed, spikeLimit, pickupScore } from '../lib/ballGame';
+import { BALL_SPAWN_RATIO, BALL_SPAWN_CLEARANCE, pickupSpawnX, ballDeformation, ballTouchesCircle, ballTouchesSpike, ballTouchesFlyingSpike, flyingSpikeLimit, flyingSpikeAltitude, layoutBottomWithin, nextSpikeSpeed, spikeLimit, pickupScore } from '../lib/ballGame';
 import './LatestProjectsPlayground.css';
 
 const RADIUS = 14;
@@ -55,7 +55,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
 
     let width = area.clientWidth;
     let height = area.clientHeight;
-    let x = width * 0.18;
+    let x = width * BALL_SPAWN_RATIO;
     let targetX = x;
     let vx = 0;
     let altitude = 0;
@@ -113,7 +113,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           }
           const progress = 1 - respawnLeft / REFORM_DURATION;
           const convergence = progress * progress * (3 - 2 * progress);
-          const respawnX = clampX(width * 0.18);
+          const respawnX = clampX(width * BALL_SPAWN_RATIO);
           for (const particle of reformParticles) {
             const px = respawnX + particle.dx * (1 - convergence);
             const py = height - RADIUS - particle.dy * (1 - convergence);
@@ -130,7 +130,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
           reformParticles.splice(0).forEach(particle => particle.element.remove());
           reformCore?.remove();
           reformCore = null;
-          x = targetX = clampX(width * 0.18);
+          x = targetX = clampX(width * BALL_SPAWN_RATIO);
           altitude = vy = vx = 0;
           scaleX = scaleY = 1; squash = squashVelocity = 0;
           ball.classList.remove('project-ball--exploding');
@@ -176,7 +176,7 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
         effects.append(element);
         pickups.push({
           element,
-          x: PICKUP_SIZE + Math.random() * Math.max(0, width - PICKUP_SIZE * 2),
+          x: pickupSpawnX(width),
           // Start at the top of the visible screen, even after scrolling.
           altitude: Math.max(0, area.getBoundingClientRect().bottom) + PICKUP_SIZE,
           speed: 80,
@@ -427,7 +427,12 @@ export default function LatestProjectsPlayground({ children, enabled, effectsRef
       // The top of the stretched ball stops just below the lowest card edge.
       maxAltitude = cards.length ? Math.max(0, height - cardsBottom - RADIUS * 2 * 1.24 - 4) : 0;
       altitude = Math.min(altitude, maxAltitude);
-      pickups.forEach(pickup => { pickup.x = Math.min(width - PICKUP_SIZE, pickup.x); });
+      pickups.forEach(pickup => {
+        pickup.x = Math.min(width - PICKUP_SIZE, pickup.x);
+        if (Math.abs(pickup.x - width * BALL_SPAWN_RATIO) < BALL_SPAWN_CLEARANCE) {
+          pickup.x = pickupSpawnX(width);
+        }
+      });
       paint();
     };
     measure();

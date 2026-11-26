@@ -49,6 +49,12 @@ export const gameUpgrades = [
 ];
 
 export const gameResetLabel = 'Reset upgrades & high scores';
+export const gameScoreContent = {
+  playerLabel: 'Your high score',
+  adrianLabel: 'Adrian high score',
+  // Replace these placeholders with Adrian's records for each mini-game.
+  adrianHighScores: { ball: 0, 'selected-work': 0 },
+};
 export const resumeLink = { label: 'My resume', path: '/Adrian_Proust_CV_EN.pdf' };
 export const secondarySkillsLabel = 'Tools';
 export const upgradeNotice = {
@@ -121,17 +127,20 @@ export const skills: Skill[] = [
   { name: 'Engine Prototyping', detail: 'Rapid iteration on Unity or Unreal Engine, through AI pipelines' },
   { name: 'Gameplay Programming', detail: 'Gameplay logic implementation in C# and C++, custom tooling integration' },
   { name: 'Game Feel & UX', detail: 'Juiciness, visual/audio feedback, interface ergonomics and intuitive onboarding' },
-  { name: 'Multiplayer Expertise', detail: 'Design of cooperative and competitive experiences across real-life games and video games, encouraging communication, teamwork and player interaction' },
+  { name: 'Multiplayer Expertise', detail: 'Design of cooperative and competitive experiences across real-life games and video games, focused on communication, teamwork and player interaction' },
 ];
 
 export const secondarySkills: string[] = [
   'Unreal Engine',
+  'Unity',
+  'Godot',
   'C / C++',
-  'IRL Event Design',
-  'Arts & VFX',
   'Da Vinci Resolve',
-  'Figma',
-  'Game Design Docs (GDD)',
+  'Figma / Miro',
+  'Codex AI',
+  'Machinations.io',
+  'Notion',
+  'GitHub / Diversion',
 ];
 
 // Project categories, in filter order.

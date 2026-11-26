@@ -64,9 +64,6 @@ export default function Projects({ onSelectProject, onMiss, studentVisited, onSt
               onClick={() => { setFilter(f); if (f === 'Student') onStudentVisit(); }}
             >
               {f}
-              <span className="mono filter__count">
-                {projects.filter((p) => !p.hidden && p.category === f).length}
-              </span>
             </button>
           ))}
         </div>
