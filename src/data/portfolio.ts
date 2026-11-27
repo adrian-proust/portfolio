@@ -55,7 +55,7 @@ export const gameScoreContent = {
   // Replace these placeholders with Adrian's records for each mini-game.
   adrianHighScores: { ball: 0, 'selected-work': 0 },
 };
-export const resumeLink = { label: 'My resume', path: '/Adrian_Proust_CV_EN.pdf' };
+export const resumeLink = { label: 'My resume', path: '/Adrian_Proust_CV_EN.pdf?v=20261127' };
 export const secondarySkillsLabel = 'Tools';
 export const upgradeNotice = {
   message: 'Need a little help? Check out my projects for upgrades!',
@@ -95,7 +95,7 @@ export const contactHeading = {
   digitalSlots: 10,
   intro: "Let's make some",
   highlight: 'fun art',
-  phrases: ['FUN ART', 'COOL GAME', 'NEW DESIGN'],
+  phrases: ['FUN ART', 'PROTOTYPE', 'COOL GAME', 'NEW DESIGN'],
   sphereLabel: 'Play with the orange sphere',
   hint: 'Move across the headline to nudge the letters with the orange sphere. Arrow keys move it; Enter starts a demonstration.',
   digitalHint: 'Move the orange sphere into the letter segments to bounce and switch them off. Clear every lit segment to reveal the next phrase. Arrow keys move the sphere; Enter starts a demonstration.',
@@ -176,7 +176,7 @@ export const projects: Project[] = [
     title: 'Wonky Diver',
     duration: '2026',
     role: 'Game designer',
-    tags: ['Unreal Engine', 'Demo', 'Exploration', 'Creature Interactions'],
+    tags: ['Unreal Engine', 'Exploration', 'Adventure'],
     category: 'Professional',
     description: 'Explore a hostile alien ocean as a barely qualified diver. Study strange creatures, gather resources, and upgrade your gear to reach deeper biomes and uncover new paths.',
     image: '/projects/wonky-diver-cover.png',

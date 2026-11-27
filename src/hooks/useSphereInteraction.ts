@@ -5,8 +5,10 @@ type Letter = { node: HTMLSpanElement; cx: number; cy: number; x: number; y: num
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 /** The orange period becomes a cursor companion, then returns to its place. */
-export function useSphereInteraction(digital = false, phrase = '', onCleared?: () => void) {
+export function useSphereInteraction(digital = false, phrase = '', onCleared?: () => void, onReturned?: () => void, locked = false) {
   const ref = useRef<HTMLDivElement>(null);
+  const lockedRef = useRef(locked);
+  lockedRef.current = locked;
   useEffect(() => {
     const headline = ref.current;
     if (!headline) return;
@@ -15,16 +17,25 @@ export function useSphereInteraction(digital = false, phrase = '', onCleared?: (
     const home = headline.querySelector<HTMLSpanElement>('[data-sphere-home]')!;
     const letters: Letter[] = Array.from(headline.querySelectorAll<HTMLSpanElement>('[data-sphere-letter]')).map(node => ({ node, cx: 0, cy: 0, x: 0, y: 0, vx: 0, vy: 0 }));
     const bars = Array.from(headline.querySelectorAll<SVGPolygonElement>('[data-sphere-segment]')).map(node => ({ node, vertices: [] as Point[], disabled: false }));
-    let advanceTimer: ReturnType<typeof setTimeout> | null = null;
+    let cleared = false, returning = false, returnNotBefore = 0;
+    let capturedPointer: number | null = null;
     const media = matchMedia('(prefers-reduced-motion: no-preference)');
     let frame: number | null = null, previousTime = 0, demoUntil = 0;
     let visible = false, dragging = false;
     let pointer: { x: number; y: number } | null = null;
-    let width = 1, height = 1, homeX = 0, homeY = 0;
+    let height = 1, homeX = 0, homeY = 0;
     let x = 0, y = 0, vx = 0, vy = 0, ballRadius = 9;
+    const dropCapture = () => {
+      if (capturedPointer !== null && ball.hasPointerCapture(capturedPointer)) ball.releasePointerCapture(capturedPointer);
+      capturedPointer = null;
+    };
+    const horizontalBounds = () => {
+      const left = headline.getBoundingClientRect().left;
+      return { min: ballRadius - left, max: document.documentElement.clientWidth - ballRadius - left };
+    };
     const drawBall = () => { ball.style.left = `${x}px`; ball.style.top = `${y}px`; };
     const measure = () => {
-      width = headline.clientWidth; height = headline.clientHeight;
+      height = headline.clientHeight;
       homeX = word.offsetLeft + home.offsetLeft + home.offsetWidth / 2;
       homeY = word.offsetTop + home.offsetTop + home.offsetHeight / 2;
       ballRadius = parseFloat(getComputedStyle(ball, '::before').width) / 2;
@@ -44,15 +55,18 @@ export function useSphereInteraction(digital = false, phrase = '', onCleared?: (
     const reset = () => {
       if (frame !== null) cancelAnimationFrame(frame);
       frame = null; previousTime = demoUntil = 0; pointer = null; dragging = false;
+      dropCapture();
       for (const bar of bars) bar.node.classList.remove('is-hit');
       measure(); x = homeX; y = homeY; vx = vy = 0; drawBall();
       for (const b of letters) { b.x = b.y = b.vx = b.vy = 0; b.node.style.removeProperty('transform'); }
+      if (returning && visible && !document.hidden) frame = requestAnimationFrame(tick);
     };
     const tick = (time: number) => {
       const dt = previousTime ? Math.min((time - previousTime) / 16.667, 1.5) : 1;
       previousTime = time;
-      const demo = time < demoUntil, active = pointer !== null || demo;
-      let targetX = pointer?.x ?? homeX, targetY = pointer?.y ?? homeY;
+      const canControl = !lockedRef.current && !returning && !cleared;
+      const demo = canControl && time < demoUntil, active = canControl && (pointer !== null || demo);
+      let targetX = active ? pointer?.x ?? homeX : homeX, targetY = active ? pointer?.y ?? homeY : homeY;
       if (demo && !pointer) {
         targetX = homeX * (.5 + Math.sin(time * .003) * .4);
         targetY = word.offsetTop + word.offsetHeight * (.5 + Math.cos(time * .004) * .22);
@@ -79,12 +93,29 @@ export function useSphereInteraction(digital = false, phrase = '', onCleared?: (
             bar.node.classList.add('is-disabled', 'is-hit');
           }
         }
-        if (bars.length > 0 && bars.every(bar => bar.disabled) && advanceTimer === null && onCleared) {
-          // Finish the last hit's flicker before lighting the next phrase.
-          advanceTimer = setTimeout(onCleared, 360);
+        if (bars.length > 0 && bars.every(bar => bar.disabled) && !cleared && onCleared) {
+          cleared = true;
+          returning = true;
+          returnNotBefore = time + 360;
+          pointer = null; demoUntil = 0; dragging = false;
+          dropCapture();
+          onCleared();
         }
       } else { x += vx * dt; y += vy * dt; }
-      let moving = demo || Math.abs(vx) + Math.abs(vy) + Math.abs(targetX-x) + Math.abs(targetY-y) > .12;
+      const bounds = horizontalBounds();
+      if (x < bounds.min || x > bounds.max) {
+        x = clamp(x, bounds.min, bounds.max);
+        vx *= -0.35;
+      }
+      const settled = Math.abs(vx) + Math.abs(vy) + Math.abs(homeX-x) + Math.abs(homeY-y) <= .12;
+      if (returning && settled && time >= returnNotBefore) {
+        returning = false;
+        x = homeX; y = homeY; vx = vy = 0;
+        drawBall(); frame = null; previousTime = 0;
+        onReturned?.();
+        return;
+      }
+      let moving = returning || demo || Math.abs(vx) + Math.abs(vy) + Math.abs(targetX-x) + Math.abs(targetY-y) > .12;
       const reach = Math.max(75, Math.min(170,word.offsetHeight*.75));
       for (const b of letters) {
         const dx = b.cx - x, dy = b.cy - y, distance = Math.max(1,Math.hypot(dx,dy));
@@ -110,45 +141,53 @@ export function useSphereInteraction(digital = false, phrase = '', onCleared?: (
     };
     const local = (event: PointerEvent) => {
       const r = headline.getBoundingClientRect();
-      return { x: clamp(event.clientX-r.left,10,width-10), y: clamp(event.clientY-r.top,10,height-10) };
+      const bounds = horizontalBounds();
+      return { x: clamp(event.clientX-r.left,bounds.min,bounds.max), y: clamp(event.clientY-r.top,10,height-10) };
     };
     const down = (event: PointerEvent) => {
-      if (!media.matches || event.button !== 0 || !(event.target as Element).closest('.contact-headline__ball')) return;
+      if (lockedRef.current || cleared || !media.matches || event.button !== 0 || !(event.target as Element).closest('.contact-headline__ball')) return;
       event.preventDefault(); ball.focus({preventScroll:true}); ball.setPointerCapture(event.pointerId);
+      capturedPointer = event.pointerId;
       dragging = true; visible = true; pointer = local(event); wake();
     };
     const move = (event: PointerEvent) => {
-      if (!media.matches || (event.pointerType !== 'mouse' && !dragging)) return;
+      if (lockedRef.current || cleared || !media.matches || (event.pointerType !== 'mouse' && !dragging)) return;
+      const bounds = headline.getBoundingClientRect();
+      if (!dragging && (event.clientY < bounds.top || event.clientY > bounds.bottom)) { leave(); return; }
       pointer = local(event); wake();
     };
-    const release = (event: PointerEvent) => {
+    const release = () => {
       if (!dragging) return;
       dragging = false; pointer = null;
-      if (ball.hasPointerCapture(event.pointerId)) ball.releasePointerCapture(event.pointerId);
+      dropCapture();
       wake();
     };
     const leave = () => { if (!dragging) { pointer = null; demoUntil = 0; wake(); } };
     const key = (event: KeyboardEvent) => {
       if (!media.matches || !['Enter',' ','Escape','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)) return;
       event.preventDefault();
+      if (lockedRef.current || cleared) return;
       if (!visible) { headline.scrollIntoView({block:'center',behavior:'instant'}); visible = true; }
       if (event.key === 'Escape') { pointer = null; demoUntil = 0; }
       else if (event.key === 'Enter' || event.key === ' ') { pointer = null; demoUntil = performance.now()+2000; }
-      else pointer = { x: clamp(x+(event.key==='ArrowLeft'?-45:event.key==='ArrowRight'?45:0),10,width-10), y: clamp(y+(event.key==='ArrowUp'?-35:event.key==='ArrowDown'?35:0),10,height-10) };
+      else {
+        const bounds = horizontalBounds();
+        pointer = { x: clamp(x+(event.key==='ArrowLeft'?-45:event.key==='ArrowRight'?45:0),bounds.min,bounds.max), y: clamp(y+(event.key==='ArrowUp'?-35:event.key==='ArrowDown'?35:0),10,height-10) };
+      }
       wake();
     };
-    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (!visible) reset(); });
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (!visible) reset(); else if (returning) wake(); });
     const resize = new ResizeObserver(reset);
-    const hidden = () => { if (document.hidden) reset(); };
+    const hidden = () => { if (document.hidden) reset(); else if (returning) wake(); };
     reset(); observer.observe(headline); resize.observe(headline);
-    headline.addEventListener('pointerdown',down); headline.addEventListener('pointermove',move); headline.addEventListener('pointerup',release); headline.addEventListener('pointercancel',release); headline.addEventListener('pointerleave',leave); headline.addEventListener('keydown',key);
+    headline.addEventListener('pointerdown',down); window.addEventListener('pointermove',move); headline.addEventListener('pointerup',release); headline.addEventListener('pointercancel',release); headline.addEventListener('keydown',key);
     ball.addEventListener('blur',leave); window.addEventListener('blur',reset); document.addEventListener('visibilitychange',hidden); document.fonts.addEventListener('loadingdone',reset); media.addEventListener('change',reset);
     return () => {
-      if (advanceTimer !== null) clearTimeout(advanceTimer);
-      reset(); observer.disconnect(); resize.disconnect();
-      headline.removeEventListener('pointerdown',down); headline.removeEventListener('pointermove',move); headline.removeEventListener('pointerup',release); headline.removeEventListener('pointercancel',release); headline.removeEventListener('pointerleave',leave); headline.removeEventListener('keydown',key);
+      if (frame !== null) cancelAnimationFrame(frame);
+      dropCapture(); observer.disconnect(); resize.disconnect();
+      headline.removeEventListener('pointerdown',down); window.removeEventListener('pointermove',move); headline.removeEventListener('pointerup',release); headline.removeEventListener('pointercancel',release); headline.removeEventListener('keydown',key);
       ball.removeEventListener('blur',leave); window.removeEventListener('blur',reset); document.removeEventListener('visibilitychange',hidden); document.fonts.removeEventListener('loadingdone',reset); media.removeEventListener('change',reset);
     };
-  },[digital, phrase, onCleared]);
+  },[digital, phrase, onCleared, onReturned]);
   return ref;
 }
