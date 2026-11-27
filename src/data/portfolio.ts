@@ -52,8 +52,7 @@ export const gameResetLabel = 'Reset upgrades & high scores';
 export const gameScoreContent = {
   playerLabel: 'Your best',
   adrianLabel: 'Adrian best',
-  // Replace these placeholders with Adrian's records for each mini-game.
-  adrianHighScores: { ball: 0, 'selected-work': 0 },
+  adrianHighScores: { ball: 61, 'selected-work': 20 },
 };
 export const resumeLink = { label: 'My resume', path: '/Adrian_Proust_CV_EN.pdf?v=20261127-2' };
 export const secondarySkillsLabel = 'Tools';
