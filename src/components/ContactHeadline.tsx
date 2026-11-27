@@ -7,7 +7,7 @@ import './ContactHeadline.css';
 
 export default function ContactHeadline({ digital = false }: { digital?: boolean }) {
   const [phraseIndex, setPhraseIndex] = useState(0);
-  const [phase, setPhase] = useState<'playing' | 'returning' | 'revealing'>(digital ? 'revealing' : 'playing');
+  const [phase, setPhase] = useState<'waiting' | 'playing' | 'returning' | 'revealing'>(digital ? 'waiting' : 'playing');
   const phrase = digital ? contactHeading.phrases[phraseIndex] : contactHeading.highlight;
   const clearPhrase = useCallback(() => setPhase('returning'), []);
   const nextPhrase = useCallback(() => {
@@ -15,6 +15,18 @@ export default function ContactHeadline({ digital = false }: { digital?: boolean
     setPhase('revealing');
   }, []);
   const headlineRef = useSphereInteraction(digital, phrase, clearPhrase, nextPhrase, phase !== 'playing');
+  useEffect(() => {
+    if (phase !== 'waiting') return;
+    const display = headlineRef.current?.querySelector('.contact-headline__word');
+    if (!display) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || entry.intersectionRatio < 0.35) return;
+      setPhase('revealing');
+      observer.disconnect();
+    }, { threshold: 0.35 });
+    observer.observe(display);
+    return () => observer.disconnect();
+  }, [phase, headlineRef]);
   useEffect(() => {
     if (phase !== 'revealing') return;
     const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -26,7 +38,7 @@ export default function ContactHeadline({ digital = false }: { digital?: boolean
   const characters = Array.from(digital ? phrase.padStart(contactHeading.digitalSlots, ' ') : phrase);
   return (
     <div ref={headlineRef} className={`contact-headline${digital ? ' contact-headline--digital' : ''}`} data-display-phase={phase}>
-      <h2 aria-label={`${contactHeading.intro} ${phrase}.`} aria-live="polite">
+      <h2 aria-label={phase === 'waiting' ? contactHeading.intro : `${contactHeading.intro} ${phrase}.`} aria-live="polite">
         <span className="contact-headline__intro" aria-hidden="true">{contactHeading.intro}</span>
         <span className="contact-headline__word" aria-hidden="true">
           {characters.map((character, i) => (

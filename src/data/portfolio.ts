@@ -55,7 +55,7 @@ export const gameScoreContent = {
   // Replace these placeholders with Adrian's records for each mini-game.
   adrianHighScores: { ball: 0, 'selected-work': 0 },
 };
-export const resumeLink = { label: 'My resume', path: '/Adrian_Proust_CV_EN.pdf?v=20261127' };
+export const resumeLink = { label: 'My resume', path: '/Adrian_Proust_CV_EN.pdf?v=20261127-2' };
 export const secondarySkillsLabel = 'Tools';
 export const upgradeNotice = {
   message: 'Need a little help? Check out my projects for upgrades!',

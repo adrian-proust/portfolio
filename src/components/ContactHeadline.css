@@ -77,6 +77,7 @@
 .contact-headline__digital-letter polygon { fill: var(--accent); }
 .contact-headline__digital-letter polygon.is-unlit,
 .contact-headline__digital-letter polygon.is-disabled { fill: color-mix(in srgb, var(--accent) 9%, var(--bg)); }
+.contact-headline[data-display-phase="waiting"] .contact-headline__digital-letter polygon { fill: color-mix(in srgb, var(--accent) 9%, var(--bg)); }
 .contact-headline__digital-letter polygon.is-hit { animation: digital-bar-hit 360ms steps(2, end); }
 .contact-headline__digital-letter polygon.is-revealing { animation: digital-bar-reveal 360ms steps(2, end) var(--segment-delay) both; }
 @keyframes digital-bar-reveal {
